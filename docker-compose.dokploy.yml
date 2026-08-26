@@ -1,0 +1,103 @@
+# Dokploy Compose app — single-file merge of docker-compose.yml + docker-compose.postgres.yml.
+#
+# Dokploy's Compose application type currently supports only ONE compose file path
+# (no `-f` chaining), so this file exists purely to satisfy that constraint. Keep it
+# in sync by hand whenever docker-compose.yml or docker-compose.postgres.yml change.
+#
+# Differences from the local dev setup (docker-compose.yml + docker-compose.postgres.yml):
+#   - ENABLE_CLAUDE_CLI: "true" is baked into goclaw's build args (local dev passes this
+#     via --build-arg on demand; here it's always on so the Claude Max subscription
+#     bridge works out of the box).
+#   - goclaw has no host `ports:` mapping — Dokploy's Domains tab routes traffic to the
+#     container's internal port (18790) via Traefik, no host port publish needed.
+#
+# Dokploy env vars to set (Environment tab): GOCLAW_GATEWAY_TOKEN, GOCLAW_ENCRYPTION_KEY,
+# POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB.
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg18
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-goclaw}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-goclaw}
+      POSTGRES_DB: ${POSTGRES_DB:-goclaw}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-goclaw} -d ${POSTGRES_DB:-goclaw}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  goclaw:
+    image: ghcr.io/nextlevelbuilder/goclaw:latest
+    build:
+      context: ${GOCLAW_DIR:-.}
+      dockerfile: Dockerfile
+      args:
+        ENABLE_OTEL: "${ENABLE_OTEL:-false}"
+        ENABLE_EMBEDUI: "${ENABLE_EMBEDUI:-true}"
+        ENABLE_PYTHON: "${ENABLE_PYTHON:-true}"
+        ENABLE_FULL_SKILLS: "${ENABLE_FULL_SKILLS:-false}"
+        ENABLE_CLAUDE_CLI: "true"
+        VERSION: "${GOCLAW_VERSION:-dev}"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - GOCLAW_HOST=0.0.0.0
+      - GOCLAW_PORT=18790
+      - GOCLAW_CONFIG=/app/data/config.json
+      - GOCLAW_GATEWAY_TOKEN=${GOCLAW_GATEWAY_TOKEN:?run ./prepare-env.sh or set GOCLAW_GATEWAY_TOKEN}
+      - GOCLAW_ENCRYPTION_KEY=${GOCLAW_ENCRYPTION_KEY:-}
+      - GOCLAW_SKILLS_DIR=/app/data/skills
+      - GOCLAW_TRACE_VERBOSE=${GOCLAW_TRACE_VERBOSE:-0}
+      - BITRIX24_LOG_RAW_EVENT=${BITRIX24_LOG_RAW_EVENT:-0}
+      - BITRIX24_FORCE_REREGISTER=${BITRIX24_FORCE_REREGISTER:-0}
+      - BITRIX24_DEBUG_UNREDACTED_TOKEN=${BITRIX24_DEBUG_UNREDACTED_TOKEN:-0}
+      - GOCLAW_POSTGRES_DSN=postgres://${POSTGRES_USER:-goclaw}:${POSTGRES_PASSWORD:-goclaw}@postgres:5432/${POSTGRES_DB:-goclaw}?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - goclaw-data:/app/data
+      - goclaw-workspace:/app/workspace
+      - goclaw-skills:/app/skills
+      - goclaw-workspace:/app/.goclaw
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    security_opt:
+      - no-new-privileges:true
+    init: true
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETUID
+      - SETGID
+      - CHOWN
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=256m
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '2.0'
+          pids: 200
+    networks:
+      - default
+      - goclaw-net
+    restart: unless-stopped
+
+volumes:
+  goclaw-data:
+  goclaw-workspace:
+  postgres-data:
+  goclaw-skills:
+
+networks:
+  goclaw-net:
+    name: goclaw-net
+    driver: bridge
