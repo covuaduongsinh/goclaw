@@ -53,6 +53,7 @@ func NewPGStores(cfg store.StoreConfig) (*store.Stores, error) {
 		SecureCLI:              NewPGSecureCLIStore(db, cfg.EncryptionKey),
 		SecureCLIGrants:        NewPGSecureCLIAgentGrantStore(db, cfg.EncryptionKey),
 		APIKeys:                NewPGAPIKeyStore(db),
+		Users:                  NewPGUserStore(db),
 		Heartbeats:             NewPGHeartbeatStore(db),
 		ConfigPermissions:      NewPGConfigPermissionStore(db),
 		Tenants:                NewPGTenantStore(db),

@@ -36,6 +36,7 @@ import enApiKeys from "./locales/en/api-keys.json";
 import enCliCredentials from "./locales/en/cli-credentials.json";
 import enPackages from "./locales/en/packages.json";
 import enTenants from "./locales/en/tenants.json";
+import enUsers from "./locales/en/users.json";
 import enSystemSettings from "./locales/en/system-settings.json";
 import enImportExport from "./locales/en/import-export.json";
 import enV3Capabilities from "./locales/en/v3-capabilities.json";
@@ -79,6 +80,7 @@ import viApiKeys from "./locales/vi/api-keys.json";
 import viCliCredentials from "./locales/vi/cli-credentials.json";
 import viPackages from "./locales/vi/packages.json";
 import viTenants from "./locales/vi/tenants.json";
+import viUsers from "./locales/vi/users.json";
 import viSystemSettings from "./locales/vi/system-settings.json";
 import viImportExport from "./locales/vi/import-export.json";
 import viV3Capabilities from "./locales/vi/v3-capabilities.json";
@@ -122,6 +124,7 @@ import koApiKeys from "./locales/ko/api-keys.json";
 import koCliCredentials from "./locales/ko/cli-credentials.json";
 import koPackages from "./locales/ko/packages.json";
 import koTenants from "./locales/ko/tenants.json";
+import koUsers from "./locales/ko/users.json";
 import koSystemSettings from "./locales/ko/system-settings.json";
 import koImportExport from "./locales/ko/import-export.json";
 import koV3Capabilities from "./locales/ko/v3-capabilities.json";
@@ -162,6 +165,7 @@ import zhApiKeys from "./locales/zh/api-keys.json";
 import zhCliCredentials from "./locales/zh/cli-credentials.json";
 import zhPackages from "./locales/zh/packages.json";
 import zhTenants from "./locales/zh/tenants.json";
+import zhUsers from "./locales/zh/users.json";
 import zhSystemSettings from "./locales/zh/system-settings.json";
 import zhImportExport from "./locales/zh/import-export.json";
 import zhV3Capabilities from "./locales/zh/v3-capabilities.json";
@@ -205,6 +209,7 @@ import ruApiKeys from "./locales/ru/api-keys.json";
 import ruCliCredentials from "./locales/ru/cli-credentials.json";
 import ruPackages from "./locales/ru/packages.json";
 import ruTenants from "./locales/ru/tenants.json";
+import ruUsers from "./locales/ru/users.json";
 import ruSystemSettings from "./locales/ru/system-settings.json";
 import ruImportExport from "./locales/ru/import-export.json";
 import ruV3Capabilities from "./locales/ru/v3-capabilities.json";
@@ -232,7 +237,7 @@ const ns = [
   "channels", "providers", "traces", "events",
   "usage", "approvals", "nodes", "logs", "tools", "mcp", "tts",
   "setup", "memory", "vault", "storage", "pending-messages", "contacts", "activity", "api-keys",
-  "cli-credentials", "packages", "tenants", "system-settings", "import-export",
+  "cli-credentials", "packages", "tenants", "users", "system-settings", "import-export",
   "v3-capabilities",
   "backup",
   "hooks",
@@ -255,6 +260,7 @@ i18n.use(initReactI18next).init({
       "cli-credentials": enCliCredentials,
       packages: enPackages,
       tenants: enTenants,
+      users: enUsers,
       "system-settings": enSystemSettings,
       "import-export": enImportExport,
       "v3-capabilities": enV3Capabilities,
@@ -276,6 +282,7 @@ i18n.use(initReactI18next).init({
       "cli-credentials": viCliCredentials,
       packages: viPackages,
       tenants: viTenants,
+      users: viUsers,
       "system-settings": viSystemSettings,
       "import-export": viImportExport,
       "v3-capabilities": viV3Capabilities,
@@ -297,6 +304,7 @@ i18n.use(initReactI18next).init({
       "cli-credentials": zhCliCredentials,
       packages: zhPackages,
       tenants: zhTenants,
+      users: zhUsers,
       "system-settings": zhSystemSettings,
       "import-export": zhImportExport,
       "v3-capabilities": zhV3Capabilities,
@@ -318,6 +326,7 @@ i18n.use(initReactI18next).init({
       "cli-credentials": koCliCredentials,
       packages: koPackages,
       tenants: koTenants,
+      users: koUsers,
       "system-settings": koSystemSettings,
       "import-export": koImportExport,
       "v3-capabilities": koV3Capabilities,
@@ -336,6 +345,7 @@ i18n.use(initReactI18next).init({
       "cli-credentials": ruCliCredentials,
       packages: ruPackages,
       tenants: ruTenants,
+      users: ruUsers,
       "system-settings": ruSystemSettings,
       "import-export": ruImportExport,
       "v3-capabilities": ruV3Capabilities,

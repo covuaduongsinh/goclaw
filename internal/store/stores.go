@@ -32,6 +32,7 @@ type Stores struct {
 	SecureCLI             SecureCLIStore
 	SecureCLIGrants       SecureCLIAgentGrantStore
 	APIKeys               APIKeyStore
+	Users                 UserStore
 	Heartbeats            HeartbeatStore
 	ConfigPermissions     ConfigPermissionStore
 	Tenants               TenantStore

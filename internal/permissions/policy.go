@@ -289,6 +289,16 @@ func isAdminMethod(method string) bool {
 		protocol.MethodAPIKeysCreate,
 		protocol.MethodAPIKeysRevoke,
 
+		// User accounts hold credentials and grant sign-in — admin only.
+		// MethodRole is fail-closed, so a method missing from this list is
+		// denied for every role including owner.
+		protocol.MethodUsersList,
+		protocol.MethodUsersGet,
+		protocol.MethodUsersCreate,
+		protocol.MethodUsersUpdate,
+		protocol.MethodUsersDelete,
+		protocol.MethodUsersPasswordSet,
+
 		// Skills (can rewrite agent behavior).
 		protocol.MethodSkillsUpdate,
 

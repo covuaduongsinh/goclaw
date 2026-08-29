@@ -369,5 +369,20 @@ func init() {
 		MsgPackagesUpdatesReasonLocked:             "软件包数据库已锁定",
 		MsgPackagesUpdatesReasonDiskFull:           "磁盘已满",
 		MsgPackagesUpdatesReasonHelperUnavailable:  "特权助手不可用",
+
+		// User accounts / email sign-in
+		MsgInvalidCredentials:   "邮箱或密码不正确",
+		MsgAccountDisabled:      "账号已被停用",
+		MsgPasswordTooShort:     "密码至少需要 %s 个字符",
+		MsgPasswordTooLong:      "密码最多 %s 字节（带重音的字符每个占 2-3 字节）",
+		MsgPasswordInvalidChars: "密码包含不允许的字符",
+		MsgEmailInvalid:         "邮箱地址无效：%s",
+		MsgEmailExists:          "该邮箱已被注册",
+		MsgUserIDExists:         "user id 已被占用：%s",
+		MsgUserNotFound:         "未找到用户：%s",
+		MsgSessionExpired:       "会话已过期，请重新登录",
+		MsgLoginRateLimited:     "登录尝试过于频繁，请在 60 秒后重试",
+		MsgCurrentPasswordWrong: "当前密码不正确",
+		MsgUserAccountsDisabled: "此服务器未启用用户账号",
 	})
 }

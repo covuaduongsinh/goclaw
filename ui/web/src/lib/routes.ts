@@ -40,6 +40,7 @@ export const ROUTES = {
   ACTIVITY: "/activity",
   API_KEYS: "/api-keys",
   PACKAGES: "/packages",
+  USERS: "/admin/users",
   TENANTS: "/admin/tenants",
   TENANT_DETAIL: "/admin/tenants/:id",
   SETUP: "/setup",

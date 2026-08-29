@@ -8,7 +8,8 @@
   "noAccessDescription": "You don't have access to any tenant. Contact your administrator.",
   "tabs": {
     "token": "Token",
-    "pairing": "Pairing"
+    "pairing": "Pairing",
+    "password": "Email"
   },
   "token": {
     "userId": "User ID",
@@ -37,5 +38,20 @@
     "approved": "Access approved! Redirecting..."
   },
   "noAccessHint": "Ask your administrator to add you to a tenant, or use a different account.",
-  "logout": "Sign Out"
+  "logout": "Sign Out",
+  "password": {
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Your password",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "errorInvalidCredentials": "Invalid email or password.",
+    "errorTooManyAttempts": "Too many sign-in attempts. Try again in a minute.",
+    "errorAccountsUnavailable": "Email sign-in is not available on this server. Use the Token tab.",
+    "errorServer": "Server returned {{status}}. Please try again.",
+    "errorCannotConnect": "Cannot connect to gateway. Check if the server is running.",
+    "mustChangeTitle": "Change your password",
+    "mustChangeBody": "An administrator set this password. Choose a new one to continue."
+  }
 }

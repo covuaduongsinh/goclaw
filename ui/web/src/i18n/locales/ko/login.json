@@ -8,7 +8,8 @@
   "noAccessDescription": "접근 가능한 테넌트가 없습니다. 관리자에게 문의하세요.",
   "tabs": {
     "token": "토큰",
-    "pairing": "페어링"
+    "pairing": "페어링",
+    "password": "이메일"
   },
   "token": {
     "userId": "사용자 ID",
@@ -37,5 +38,20 @@
     "approved": "접근이 승인되었습니다! 리디렉션 중..."
   },
   "noAccessHint": "관리자에게 테넌트에 추가해 달라고 요청하거나 다른 계정을 사용하세요.",
-  "logout": "로그아웃"
+  "logout": "로그아웃",
+  "password": {
+    "email": "이메일",
+    "emailPlaceholder": "you@example.com",
+    "password": "비밀번호",
+    "passwordPlaceholder": "비밀번호",
+    "signIn": "로그인",
+    "signingIn": "로그인 중...",
+    "errorInvalidCredentials": "이메일 또는 비밀번호가 올바르지 않습니다.",
+    "errorTooManyAttempts": "로그인 시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
+    "errorAccountsUnavailable": "이 서버에서는 이메일 로그인을 사용할 수 없습니다. 토큰 탭을 사용하세요.",
+    "errorServer": "서버가 {{status}}을(를) 반환했습니다. 다시 시도해 주세요.",
+    "errorCannotConnect": "게이트웨이에 연결할 수 없습니다. 서버가 실행 중인지 확인하세요.",
+    "mustChangeTitle": "비밀번호 변경",
+    "mustChangeBody": "관리자가 설정한 비밀번호입니다. 계속하려면 새 비밀번호를 설정하세요."
+  }
 }

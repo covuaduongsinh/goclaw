@@ -164,6 +164,10 @@ type authResult struct {
 	KeyData       *store.APIKeyData // non-nil when authenticated via API key
 	TenantID      uuid.UUID         // resolved tenant; always concrete after resolution
 	TenantSlug    string            // resolved tenant slug for filesystem paths
+	// SessionUserID is the account identity behind a login session token.
+	// When set it overrides the X-GoClaw-User-Id header: the header is a claim,
+	// this came out of the database.
+	SessionUserID string
 }
 
 // resolveAuth determines the caller's role from the request.
@@ -218,6 +222,43 @@ func resolveAuthWithBearer(r *http.Request, bearer string) authResult {
 			res.TenantSlug = resolveTenantSlug(r.Context(), keyData.TenantID)
 		}
 		return res
+	}
+	// Login session token → identity and role come from the database.
+	//
+	// Placed after API keys but before browser pairing, and both positions
+	// matter. After API keys: a "goclaws_" token can never match an API key
+	// hash, so nothing is shadowed and the existing hot path is untouched.
+	// Before pairing: the web client sends Authorization and
+	// X-GoClaw-Sender-Id on the same request, so if pairing resolved first, a
+	// signed-in user on a paired browser would authenticate as whatever
+	// X-GoClaw-User-Id claimed instead of as their account.
+	if crypto.IsSessionToken(bearer) {
+		sess, user := ResolveUserSession(r.Context(), bearer)
+		if sess == nil || user == nil {
+			// Deny here rather than falling through. The no-auth fallback
+			// below grants RoleAdmin whenever no gateway token is configured,
+			// which would turn every malformed session token into an admin on
+			// a local or Lite deployment.
+			slog.Warn("security.http_session_auth_failed", "ip", r.RemoteAddr)
+			return authResult{}
+		}
+		tenantVal := r.Header.Get("X-GoClaw-Tenant-Id")
+		tenantID, allowed := resolveTenantHint(r.Context(), tenantVal, user.UserID)
+		if !allowed {
+			return authResult{}
+		}
+		if tenantVal == "" && tenantID == store.MasterTenantID && pkgTenantCache != nil {
+			if memberships, err := pkgTenantCache.store.ListUserTenants(r.Context(), user.UserID); err == nil && len(memberships) == 1 {
+				tenantID = memberships[0].TenantID
+			}
+		}
+		return authResult{
+			Role:          sessionRole(r.Context(), tenantID, user.UserID),
+			Authenticated: true,
+			TenantID:      tenantID,
+			TenantSlug:    resolveTenantSlug(r.Context(), tenantID),
+			SessionUserID: user.UserID,
+		}
 	}
 	// Browser pairing → role derived from tenant_users.role (via
 	// X-GoClaw-Sender-Id header). Falls back to RoleOperator when the user
@@ -277,6 +318,24 @@ func resolveScopedTenant(ctx context.Context, tenantVal string) uuid.UUID {
 	}
 	slog.Debug("security.http_tenant_scope_unresolved", "tenant", tenantVal)
 	return uuid.Nil
+}
+
+// sessionRole derives the gateway role for a signed-in account from its
+// tenant_users membership.
+//
+// No membership means RoleViewer. Browser pairing falls back to RoleOperator
+// instead, but only to preserve behaviour for clients that predate tenant
+// roles; an account created through this path has no such history, so it
+// starts with the least privilege until an administrator grants membership.
+func sessionRole(ctx context.Context, tenantID uuid.UUID, userID string) permissions.Role {
+	if pkgTenantCache == nil || userID == "" {
+		return permissions.RoleViewer
+	}
+	tRole, err := pkgTenantCache.store.GetUserRole(ctx, tenantID, userID)
+	if err != nil || tRole == "" {
+		return permissions.RoleViewer
+	}
+	return permissions.RoleFromTenantRole(tRole)
 }
 
 func resolveTenantSlug(ctx context.Context, tenantID uuid.UUID) string {
@@ -342,7 +401,7 @@ func enrichContext(ctx context.Context, r *http.Request, auth authResult) contex
 	userID := extractUserID(r)
 	// Security: In dev mode (no gateway token configured), do not trust the
 	// X-GoClaw-User-Id header — force "system" to prevent identity spoofing.
-	if pkgGatewayToken == "" && auth.KeyData == nil && userID != "" {
+	if pkgGatewayToken == "" && auth.KeyData == nil && auth.SessionUserID == "" && userID != "" {
 		slog.Warn("security.user_id_header_ignored_no_auth",
 			"attempted_user_id", userID,
 			"ip", r.RemoteAddr,
@@ -358,6 +417,16 @@ func enrichContext(ctx context.Context, r *http.Request, auth authResult) contex
 			)
 		}
 		userID = auth.KeyData.OwnerID
+	}
+	// A login session carries a verified identity; the header is only a claim.
+	if auth.SessionUserID != "" {
+		if userID != "" && userID != auth.SessionUserID {
+			slog.Warn("security.session_user_override",
+				"header_user_id", userID,
+				"session_user_id", auth.SessionUserID,
+			)
+		}
+		userID = auth.SessionUserID
 	}
 	if userID != "" {
 		ctx = store.WithUserID(ctx, userID)

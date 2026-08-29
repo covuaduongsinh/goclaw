@@ -81,12 +81,12 @@ func init() {
 		MsgNotImplemented: "%s은(는) 아직 구현되지 않았습니다",
 
 		// Agent links
-		MsgLinksNotConfigured:   "에이전트 링크가 설정되지 않았습니다",
-		MsgInvalidDirection:     "방향은 outbound, inbound, 또는 bidirectional이어야 합니다",
-		MsgSourceTargetSame:     "소스와 대상은 서로 다른 에이전트여야 합니다",
-		MsgCannotDelegateOpen:   "오픈 에이전트에게는 위임할 수 없습니다 — 사전 정의된 에이전트만 위임 대상이 될 수 있습니다",
-		MsgNoUpdatesProvided:    "업데이트가 제공되지 않았습니다",
-		MsgInvalidLinkStatus:    "상태는 active 또는 disabled여야 합니다",
+		MsgLinksNotConfigured: "에이전트 링크가 설정되지 않았습니다",
+		MsgInvalidDirection:   "방향은 outbound, inbound, 또는 bidirectional이어야 합니다",
+		MsgSourceTargetSame:   "소스와 대상은 서로 다른 에이전트여야 합니다",
+		MsgCannotDelegateOpen: "오픈 에이전트에게는 위임할 수 없습니다 — 사전 정의된 에이전트만 위임 대상이 될 수 있습니다",
+		MsgNoUpdatesProvided:  "업데이트가 제공되지 않았습니다",
+		MsgInvalidLinkStatus:  "상태는 active 또는 disabled여야 합니다",
 
 		// Teams
 		MsgTeamsNotConfigured:   "팀이 설정되지 않았습니다",
@@ -183,5 +183,20 @@ func init() {
 		MsgTenantUserNotFound:  "테넌트 사용자를 찾을 수 없습니다",
 		MsgTenantMismatch:      "테넌트 사용자가 이 테넌트에 속하지 않습니다",
 		MsgTenantScopeRequired: "이 작업에는 테넌트 범위가 필요합니다",
+
+		// User accounts / email sign-in
+		MsgInvalidCredentials:   "이메일 또는 비밀번호가 올바르지 않습니다",
+		MsgAccountDisabled:      "비활성화된 계정입니다",
+		MsgPasswordTooShort:     "비밀번호는 최소 %s자 이상이어야 합니다",
+		MsgPasswordTooLong:      "비밀번호는 최대 %s바이트입니다 (악센트 문자는 문자당 2-3바이트)",
+		MsgPasswordInvalidChars: "비밀번호에 허용되지 않는 문자가 있습니다",
+		MsgEmailInvalid:         "올바르지 않은 이메일 주소입니다: %s",
+		MsgEmailExists:          "이미 등록된 이메일입니다",
+		MsgUserIDExists:         "이미 사용 중인 user id입니다: %s",
+		MsgUserNotFound:         "사용자를 찾을 수 없습니다: %s",
+		MsgSessionExpired:       "세션이 만료되었습니다. 다시 로그인해 주세요",
+		MsgLoginRateLimited:     "로그인 시도가 너무 많습니다. 60초 후에 다시 시도해 주세요",
+		MsgCurrentPasswordWrong: "현재 비밀번호가 올바르지 않습니다",
+		MsgUserAccountsDisabled: "이 서버에서는 사용자 계정을 사용할 수 없습니다",
 	})
 }

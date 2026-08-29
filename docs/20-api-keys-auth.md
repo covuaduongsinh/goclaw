@@ -2,6 +2,8 @@
 
 GoClaw supports two authentication mechanisms: a single gateway token (configured at startup) and multiple API keys with fine-grained RBAC scopes. Both work across HTTP REST and WebSocket RPC.
 
+A third credential — email + password accounts, which issue `goclaws_` session tokens — is documented separately in [25 — Email + Password Sign-In](25-email-password-sign-in.md). It uses the same bearer transport and sits between API keys and browser pairing in the resolution order below.
+
 ---
 
 ## 1. Gateway Token
@@ -159,7 +161,7 @@ On successful API key authentication, `last_used_at` is updated asynchronously (
 
 ### HTTP Request Headers
 
-- **Bearer token**: `Authorization: Bearer <token>` — checked first for gateway token or API key
+- **Bearer token**: `Authorization: Bearer <token>` — checked first for gateway token, then API key, then login session token (`goclaws_` prefix)
 - **User ID**: `X-GoClaw-User-Id: <user-id>` — optional external user identifier (max 255 chars)
 - **Browser pairing**: `X-GoClaw-Sender-Id: <sender-id>` — identifies a previously-paired browser device
 - **Tenant scope**: `X-GoClaw-Tenant-Id: <tenant-uuid-or-slug>` — owner/system-key scope narrowing; non-owner gateway token and browser-pairing callers must already belong to the requested tenant
@@ -171,6 +173,7 @@ User context is still required for user-scoped read paths. Admin API keys withou
 
 - **Gateway token + owner user ID**: may narrow to any tenant via `X-GoClaw-Tenant-Id`
 - **Gateway token + non-owner user ID**: may only use `X-GoClaw-Tenant-Id` for a tenant where that user already has membership; otherwise auth fails
+- **Login session**: same tenant-membership rule as non-owner gateway-token HTTP requests; `user_id` always comes from the account, never from the header
 - **Browser pairing**: same tenant-membership rule as non-owner gateway-token HTTP requests
 - **Tenant-bound API key**: always stays bound to its stored `tenant_id`; request headers cannot move it
 - **System-level API key** (`tenant_id = NULL`): keeps its scope-derived role (`admin`, `operator`, or `viewer`) and may narrow requests to a tenant via `X-GoClaw-Tenant-Id`, but it does **not** become `owner`

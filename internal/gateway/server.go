@@ -55,6 +55,7 @@ type Server struct {
 	policyEngine   *permissions.PolicyEngine
 	pairingService store.PairingStore
 	apiKeyStore    store.APIKeyStore   // for API key auth lookup
+	userStore      store.UserStore     // for email/password session auth lookup
 	agentStore     store.AgentStore    // for context injection in tools_invoke
 	skillStore     store.SkillStore    // for the CRUD MCP server (/api/mcp/) skill tools
 	cronStore      store.CronStore     // for the CRUD MCP server (/api/mcp/) cron tools
@@ -759,6 +760,24 @@ func (s *Server) SetWebhookLLMHandler(h *httpapi.WebhookLLMHandler) {
 func (s *Server) SetTenantsHandler(h *httpapi.TenantsHandler) {
 	s.handlers = append(s.handlers, h)
 }
+
+// SetAuthLoginHandler sets the email/password sign-in handler.
+func (s *Server) SetAuthLoginHandler(h *httpapi.AuthLoginHandler) {
+	s.handlers = append(s.handlers, h)
+}
+
+// SetUsersAdminHandler sets the user account management handler.
+func (s *Server) SetUsersAdminHandler(h *httpapi.UsersAdminHandler) {
+	s.handlers = append(s.handlers, h)
+}
+
+// SetUserStore sets the user account store for session auth lookup.
+func (s *Server) SetUserStore(st store.UserStore) { s.userStore = st }
+
+// UserStore returns the wired user account store, or nil when email/password
+// accounts are unavailable. Method registration reads it rather than threading
+// another parameter through registerAllMethods.
+func (s *Server) UserStore() store.UserStore { return s.userStore }
 
 // SetAPIKeyStore sets the API key store for token-based auth lookup.
 func (s *Server) SetAPIKeyStore(st store.APIKeyStore) { s.apiKeyStore = st }

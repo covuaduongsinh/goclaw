@@ -30,5 +30,6 @@
     "releaseNotes": "发行说明"
   },
   "systemSettings": "系统设置",
-  "toggleTheme": "切换主题"
+  "toggleTheme": "切换主题",
+  "changePassword": "修改密码"
 }

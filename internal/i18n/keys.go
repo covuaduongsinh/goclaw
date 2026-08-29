@@ -381,4 +381,19 @@ const (
 	MsgGitCredHostScopeInvalid         = "error.git_cred_host_scope_invalid"         // "host_scope %q is not a valid hostname"
 	MsgGitCredBlobMissingField         = "error.git_cred_blob_missing_field"         // "blob missing required field %q"
 	MsgGitCredUnsupportedCredType      = "error.git_cred_unsupported_cred_type"      // "credential_type %q is not supported"
+
+	// --- User accounts / email sign-in ---
+	MsgInvalidCredentials   = "error.invalid_credentials"    // "invalid email or password"
+	MsgAccountDisabled      = "error.account_disabled"       // "account is disabled" (log only, never returned)
+	MsgPasswordTooShort     = "error.password_too_short"     // "password must be at least %s characters"
+	MsgPasswordTooLong      = "error.password_too_long"      // "password must be at most %s bytes"
+	MsgPasswordInvalidChars = "error.password_invalid_chars" // "password contains forbidden characters"
+	MsgEmailInvalid         = "error.email_invalid"          // "invalid email address: %s"
+	MsgEmailExists          = "error.email_exists"           // "email is already registered"
+	MsgUserIDExists         = "error.user_id_exists"         // "user id already in use: %s"
+	MsgUserNotFound         = "error.user_not_found"         // "user not found: %s"
+	MsgSessionExpired       = "error.session_expired"        // "session expired, please sign in again"
+	MsgLoginRateLimited     = "error.login_rate_limited"     // "too many sign-in attempts, try again in 60 seconds"
+	MsgCurrentPasswordWrong = "error.current_password_wrong" // "current password is incorrect"
+	MsgUserAccountsDisabled = "error.user_accounts_disabled" // "user accounts are not available on this server"
 )

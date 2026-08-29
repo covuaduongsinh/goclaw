@@ -65,6 +65,7 @@ func NewSQLiteStores(cfg store.StoreConfig) (*store.Stores, error) {
 		MCPOAuthTokens:         NewSQLiteMCPOAuthTokenStore(db, cfg.EncryptionKey),
 		Activity:               NewSQLiteActivityStore(db),
 		APIKeys:                NewSQLiteAPIKeyStore(db),
+		Users:                  NewSQLiteUserStore(db),
 		ConfigPermissions:      NewSQLiteConfigPermissionStore(db),
 		BrowserCookies:         NewSQLiteBrowserCookieStore(db, cfg.EncryptionKey),
 		Memory:                 NewSQLiteMemoryStore(db),

@@ -22,7 +22,8 @@
   "subtitle": "登录网关控制面板",
   "tabs": {
     "pairing": "配对",
-    "token": "令牌"
+    "token": "令牌",
+    "password": "邮箱"
   },
   "token": {
     "connect": "连接",
@@ -37,5 +38,20 @@
     "userIdHint": "使用 \"system\" 获取完整系统权限"
   },
   "noAccessHint": "请联系管理员将您添加到租户，或使用其他账号登录。",
-  "logout": "退出登录"
+  "logout": "退出登录",
+  "password": {
+    "email": "邮箱",
+    "emailPlaceholder": "you@example.com",
+    "password": "密码",
+    "passwordPlaceholder": "你的密码",
+    "signIn": "登录",
+    "signingIn": "正在登录...",
+    "errorInvalidCredentials": "邮箱或密码不正确。",
+    "errorTooManyAttempts": "登录尝试过于频繁，请稍后再试。",
+    "errorAccountsUnavailable": "此服务器未启用邮箱登录，请使用「令牌」标签页。",
+    "errorServer": "服务器返回 {{status}}，请重试。",
+    "errorCannotConnect": "无法连接到网关，请检查服务器是否在运行。",
+    "mustChangeTitle": "修改密码",
+    "mustChangeBody": "该密码由管理员设置，请设置新密码后继续。"
+  }
 }

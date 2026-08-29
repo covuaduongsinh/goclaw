@@ -22,7 +22,8 @@
   "subtitle": "Đăng nhập vào bảng điều khiển gateway",
   "tabs": {
     "pairing": "Ghép nối",
-    "token": "Token"
+    "token": "Token",
+    "password": "Email"
   },
   "token": {
     "connect": "Kết nối",
@@ -37,5 +38,20 @@
     "userIdHint": "Dùng \"system\" để có toàn quyền hệ thống"
   },
   "noAccessHint": "Yêu cầu quản trị viên thêm bạn vào tenant, hoặc đăng nhập bằng tài khoản khác.",
-  "logout": "Đăng xuất"
+  "logout": "Đăng xuất",
+  "password": {
+    "email": "Email",
+    "emailPlaceholder": "ban@example.com",
+    "password": "Mật khẩu",
+    "passwordPlaceholder": "Mật khẩu của bạn",
+    "signIn": "Đăng nhập",
+    "signingIn": "Đang đăng nhập...",
+    "errorInvalidCredentials": "Email hoặc mật khẩu không đúng.",
+    "errorTooManyAttempts": "Quá nhiều lần đăng nhập. Vui lòng thử lại sau một phút.",
+    "errorAccountsUnavailable": "Máy chủ này chưa bật đăng nhập bằng email. Hãy dùng tab Token.",
+    "errorServer": "Máy chủ trả về {{status}}. Vui lòng thử lại.",
+    "errorCannotConnect": "Không kết nối được tới gateway. Kiểm tra xem máy chủ có đang chạy không.",
+    "mustChangeTitle": "Đổi mật khẩu",
+    "mustChangeBody": "Mật khẩu này do quản trị viên đặt. Hãy chọn mật khẩu mới để tiếp tục."
+  }
 }

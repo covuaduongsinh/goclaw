@@ -93,6 +93,7 @@ const (
 	CacheKindAgentAccess      = "agent_access"
 	CacheKindTeamAccess       = "team_access"
 	CacheKindTenants          = "tenants"
+	CacheKindUserSessions     = "user_sessions"
 )
 
 // Topic constants for msgBus.Subscribe() / Broadcast().

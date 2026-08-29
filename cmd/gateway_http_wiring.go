@@ -170,6 +170,18 @@ func (d *gatewayDeps) wireHTTPHandlersOnServer(
 		httpapi.InitAPIKeyCache(d.pgStores.APIKeys, d.msgBus)
 	}
 
+	// Email + password sign-in. Guarded on the store being present: the Docker
+	// entrypoint does not abort startup when a migration fails, so a server can
+	// legitimately be running against a database without the users table. In
+	// that state the sign-in routes answer 503 and the gateway-token, API-key
+	// and pairing credentials continue to work unchanged.
+	if d.pgStores != nil && d.pgStores.Users != nil {
+		d.server.SetAuthLoginHandler(httpapi.NewAuthLoginHandler(d.pgStores.Users, d.pgStores.Tenants, d.msgBus))
+		d.server.SetUsersAdminHandler(httpapi.NewUsersAdminHandler(d.pgStores.Users, d.pgStores.Tenants, d.msgBus))
+		d.server.SetUserStore(d.pgStores.Users)
+		httpapi.InitUserSessions(d.pgStores.Users, d.msgBus)
+	}
+
 	// K10: single shared webhookLimiter — one per process enforces per-tenant RPM cap across
 	// both LLM and message endpoints. Two separate instances would double the effective cap.
 	webhookEncKey := os.Getenv("GOCLAW_ENCRYPTION_KEY")

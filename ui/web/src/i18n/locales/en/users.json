@@ -1,0 +1,76 @@
+{
+  "title": "Users",
+  "description": "Accounts that can sign in with email and password",
+  "searchPlaceholder": "Search by email or user ID",
+  "neverSignedIn": "Never",
+  "fields": {
+    "email": "Email",
+    "password": "Password",
+    "displayName": "Display name",
+    "userId": "User ID",
+    "tenant": "Tenant",
+    "role": "Role",
+    "status": "Status",
+    "lastLogin": "Last sign-in",
+    "mustChangePassword": "Require password change"
+  },
+  "status": {
+    "active": "Active",
+    "disabled": "Disabled",
+    "mustChange": "Must change password"
+  },
+  "actions": {
+    "setPassword": "Set password",
+    "disable": "Disable account",
+    "enable": "Enable account",
+    "revokeSessions": "Sign out everywhere"
+  },
+  "empty": {
+    "title": "No accounts yet",
+    "description": "Create the first account, or run: goclaw user create --email you@example.com --generate",
+    "noMatch": "No account matches your search."
+  },
+  "create": {
+    "title": "Create account",
+    "description": "The person signs in with this email and password.",
+    "submit": "Create account",
+    "creating": "Creating...",
+    "passwordHint": "At least 12 characters.",
+    "userIdPlaceholder": "derived from email",
+    "userIdHint": "Set a user ID to attach this account to agents, sessions or tenant membership that already belong to that identity.",
+    "noTenant": "No tenant",
+    "noTenantWarning": "Without tenant membership the account signs in as a viewer and cannot use the dashboard.",
+    "mustChangeHint": "Recommended: you know this password."
+  },
+  "delete": {
+    "title": "Delete account",
+    "description": "{{email}} will no longer be able to sign in. Their sessions end immediately."
+  },
+  "setPassword": {
+    "title": "Set password",
+    "description": "Set a new password for {{email}}.",
+    "hint": "All their sessions end and they must change it on next sign-in."
+  },
+  "changePassword": {
+    "title": "Change password",
+    "description": "Update the password for your account.",
+    "forcedDescription": "An administrator set your current password. Choose a new one to continue.",
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm new password",
+    "submit": "Change password",
+    "success": "Password changed. Other devices have been signed out."
+  },
+  "toast": {
+    "created": "Account created",
+    "updated": "Account updated",
+    "deleted": "Account deleted",
+    "passwordSet": "Password set",
+    "sessionsRevoked": "Sessions revoked",
+    "failedCreate": "Could not create account",
+    "failedUpdate": "Could not update account",
+    "failedDelete": "Could not delete account",
+    "failedPassword": "Could not set password",
+    "failedRevoke": "Could not revoke sessions"
+  }
+}

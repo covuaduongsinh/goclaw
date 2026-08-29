@@ -369,5 +369,20 @@ func init() {
 		MsgPackagesUpdatesReasonLocked:             "Cơ sở dữ liệu gói đang bị khóa",
 		MsgPackagesUpdatesReasonDiskFull:           "Đĩa đã đầy",
 		MsgPackagesUpdatesReasonHelperUnavailable:  "Dịch vụ đặc quyền không khả dụng",
+
+		// User accounts / email sign-in
+		MsgInvalidCredentials:   "email hoặc mật khẩu không đúng",
+		MsgAccountDisabled:      "tài khoản đã bị vô hiệu hoá",
+		MsgPasswordTooShort:     "mật khẩu phải có ít nhất %s ký tự",
+		MsgPasswordTooLong:      "mật khẩu tối đa %s byte (ký tự có dấu chiếm 2-3 byte mỗi ký tự)",
+		MsgPasswordInvalidChars: "mật khẩu chứa ký tự không hợp lệ",
+		MsgEmailInvalid:         "địa chỉ email không hợp lệ: %s",
+		MsgEmailExists:          "email đã được đăng ký",
+		MsgUserIDExists:         "user id đã được sử dụng: %s",
+		MsgUserNotFound:         "không tìm thấy người dùng: %s",
+		MsgSessionExpired:       "phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại",
+		MsgLoginRateLimited:     "quá nhiều lần đăng nhập, vui lòng thử lại sau 60 giây",
+		MsgCurrentPasswordWrong: "mật khẩu hiện tại không đúng",
+		MsgUserAccountsDisabled: "máy chủ này không hỗ trợ tài khoản người dùng",
 	})
 }

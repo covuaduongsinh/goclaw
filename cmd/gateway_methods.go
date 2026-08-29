@@ -67,6 +67,11 @@ func registerAllMethods(server *gateway.Server, agents *agent.Router, sessStore 
 	pairingMethods.Register(router)
 
 	// Phase 2: Usage (queries SessionStore for real token data)
+	// User accounts — registered only when the users table is available; the
+	// methods themselves also answer UNAVAILABLE if the store goes missing.
+	if userStore := server.UserStore(); userStore != nil {
+		methods.NewUsersMethods(userStore, tenantStore, msgBus).Register(router)
+	}
 	methods.NewUsageMethods(sessStore, tracingStore).Register(router)
 	methods.NewLLMMethods(providerReg, cfg.Gateway.BackgroundProvider, cfg.Gateway.BackgroundModel).Register(router)
 	// Wire the same provider registry into the CRUD MCP server (see

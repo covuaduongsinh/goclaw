@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/nextlevelbuilder/goclaw/internal/cache"
 	"github.com/nextlevelbuilder/goclaw/internal/config"
+	goclawcrypto "github.com/nextlevelbuilder/goclaw/internal/crypto"
 	"github.com/nextlevelbuilder/goclaw/internal/edition"
 	httpapi "github.com/nextlevelbuilder/goclaw/internal/http"
 	"github.com/nextlevelbuilder/goclaw/internal/i18n"
@@ -231,6 +232,61 @@ func (r *MethodRouter) handleConnect(ctx context.Context, client *Client, req *p
 			r.sendConnectResponse(ctx, client, req.ID)
 			return
 		}
+	}
+
+	// Path 1c: Login session token → identity and role come from the database.
+	//
+	// Must sit above Path 2: that fallback hands out RoleOperator whenever no
+	// gateway token is configured, so on a Lite or local deployment every
+	// session token would be accepted without ever consulting the database.
+	if params.Token != "" && goclawcrypto.IsSessionToken(params.Token) {
+		sess, user := httpapi.ResolveUserSession(ctx, params.Token)
+		if sess == nil || user == nil {
+			// Reject rather than falling through to Path 3b, which would issue
+			// a pairing code and leave the client unable to tell an expired
+			// session apart from a device that was never paired.
+			slog.Warn("security.ws_session_auth_failed", "client", client.id)
+			client.authenticated = false
+			locale := i18n.Normalize(client.locale)
+			client.SendResponse(protocol.NewErrorResponse(req.ID, protocol.ErrUnauthorized,
+				i18n.T(locale, i18n.MsgSessionExpired)))
+			return
+		}
+		client.authenticated = true
+		client.userID = user.UserID // from the database, not from params
+
+		hint := params.TenantID
+		if hint == "" {
+			hint = params.TenantHint
+		}
+		if hint == "" {
+			hint = params.TenantScope // deprecated
+		}
+		tid, errCode := r.resolveTenantHint(ctx, hint, user.UserID)
+		if errCode != "" {
+			client.SendResponse(protocol.NewErrorResponse(req.ID, errCode, "tenant access revoked"))
+			return
+		}
+		// No hint and resolution fell back to master: infer the working tenant
+		// when the account belongs to exactly one, matching the pairing path.
+		if hint == "" && tid == store.MasterTenantID && r.tenantStore != nil {
+			if memberships, err := r.tenantStore.ListUserTenants(ctx, user.UserID); err == nil && len(memberships) == 1 {
+				tid = memberships[0].TenantID
+			}
+		}
+		client.tenantID = tid
+		client.role = permissions.RoleViewer
+		if tRole, _ := r.getUserTenantRole(ctx, tid, user.UserID); tRole != "" {
+			client.role = permissions.RoleFromTenantRole(tRole)
+		}
+		slog.Info("session authenticated",
+			"user_id", user.UserID,
+			"client", client.id,
+			"tenant_id", client.tenantID,
+			"role", string(client.role),
+		)
+		r.sendConnectResponse(ctx, client, req.ID)
+		return
 	}
 
 	// Path 2: No token configured → operator (backward compat)

@@ -184,6 +184,16 @@ const (
 	MethodAPIKeysRevoke = "api_keys.revoke"
 )
 
+// User account management (email + password sign-in)
+const (
+	MethodUsersList        = "users.list"
+	MethodUsersGet         = "users.get"
+	MethodUsersCreate      = "users.create"
+	MethodUsersUpdate      = "users.update"
+	MethodUsersDelete      = "users.delete"
+	MethodUsersPasswordSet = "users.password.set"
+)
+
 // Voices (ElevenLabs voice picker)
 const (
 	MethodVoicesList    = "voices.list"

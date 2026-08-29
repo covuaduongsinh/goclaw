@@ -1001,6 +1001,7 @@ func runGateway() {
 		backfillTraceCostsAfterPricingSync(syncCtx, pgStores, snapshotWorker)
 	})
 	server.StartUpdateChecker(ctx)
+	startUserSessionSweeper(ctx, pgStores.Users)
 
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)

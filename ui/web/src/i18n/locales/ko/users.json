@@ -1,0 +1,76 @@
+{
+  "title": "사용자",
+  "description": "이메일과 비밀번호로 로그인하는 계정",
+  "searchPlaceholder": "이메일 또는 user ID로 검색",
+  "neverSignedIn": "없음",
+  "fields": {
+    "email": "이메일",
+    "password": "비밀번호",
+    "displayName": "표시 이름",
+    "userId": "User ID",
+    "tenant": "테넌트",
+    "role": "역할",
+    "status": "상태",
+    "lastLogin": "최근 로그인",
+    "mustChangePassword": "비밀번호 변경 요구"
+  },
+  "status": {
+    "active": "활성",
+    "disabled": "비활성",
+    "mustChange": "비밀번호 변경 필요"
+  },
+  "actions": {
+    "setPassword": "비밀번호 설정",
+    "disable": "계정 비활성화",
+    "enable": "계정 활성화",
+    "revokeSessions": "모든 기기에서 로그아웃"
+  },
+  "empty": {
+    "title": "아직 계정이 없습니다",
+    "description": "첫 계정을 만들거나 다음을 실행하세요: goclaw user create --email you@example.com --generate",
+    "noMatch": "검색과 일치하는 계정이 없습니다."
+  },
+  "create": {
+    "title": "계정 만들기",
+    "description": "이 이메일과 비밀번호로 로그인합니다.",
+    "submit": "계정 만들기",
+    "creating": "만드는 중...",
+    "passwordHint": "12자 이상.",
+    "userIdPlaceholder": "이메일에서 자동 생성",
+    "userIdHint": "user ID를 지정하면 해당 신원이 이미 보유한 에이전트, 세션, 테넌트 멤버십에 계정을 연결할 수 있습니다.",
+    "noTenant": "테넌트 없음",
+    "noTenantWarning": "테넌트 멤버십이 없으면 viewer 역할로 로그인되어 대시보드를 사용할 수 없습니다.",
+    "mustChangeHint": "권장: 이 비밀번호를 관리자가 알고 있습니다."
+  },
+  "delete": {
+    "title": "계정 삭제",
+    "description": "{{email}} 계정은 더 이상 로그인할 수 없으며 세션이 즉시 종료됩니다."
+  },
+  "setPassword": {
+    "title": "비밀번호 설정",
+    "description": "{{email}}의 새 비밀번호를 설정합니다.",
+    "hint": "해당 계정의 모든 세션이 종료되고 다음 로그인 시 비밀번호를 변경해야 합니다."
+  },
+  "changePassword": {
+    "title": "비밀번호 변경",
+    "description": "계정 비밀번호를 변경합니다.",
+    "forcedDescription": "현재 비밀번호는 관리자가 설정했습니다. 계속하려면 새 비밀번호를 설정하세요.",
+    "current": "현재 비밀번호",
+    "new": "새 비밀번호",
+    "confirm": "새 비밀번호 확인",
+    "submit": "비밀번호 변경",
+    "success": "비밀번호가 변경되었습니다. 다른 기기는 로그아웃되었습니다."
+  },
+  "toast": {
+    "created": "계정이 생성되었습니다",
+    "updated": "계정이 업데이트되었습니다",
+    "deleted": "계정이 삭제되었습니다",
+    "passwordSet": "비밀번호가 설정되었습니다",
+    "sessionsRevoked": "세션이 해제되었습니다",
+    "failedCreate": "계정을 만들지 못했습니다",
+    "failedUpdate": "계정을 업데이트하지 못했습니다",
+    "failedDelete": "계정을 삭제하지 못했습니다",
+    "failedPassword": "비밀번호를 설정하지 못했습니다",
+    "failedRevoke": "세션을 해제하지 못했습니다"
+  }
+}

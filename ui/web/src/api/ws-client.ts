@@ -1,4 +1,5 @@
 import { generateId } from "@/lib/utils";
+import { SESSION_TOKEN_PREFIX } from "@/lib/constants";
 import type { ErrorShape, EventFrame, ResponseFrame } from "./protocol";
 import { PROTOCOL_VERSION } from "./protocol";
 import { ApiError } from "./errors";
@@ -238,8 +239,14 @@ export class WsClient {
       }
       this.pairingInProgress = false;
 
-      // Server accepted connection but assigned viewer role → token is invalid
-      if (this.getToken() && res?.role === "viewer") {
+      // Server accepted the connection but assigned viewer → the token is
+      // wrong. This only holds for gateway tokens and API keys, which always
+      // carry at least operator. For a session token viewer is a legitimate
+      // role, and treating it as a failure would sign the account straight
+      // back out after every successful login.
+      const token = this.getToken();
+      const isSessionToken = token.startsWith(SESSION_TOKEN_PREFIX);
+      if (token && !isSessionToken && res?.role === "viewer") {
         this.intentionalClose = true;
         this.ws?.close();
         this.onAuthFailure?.();

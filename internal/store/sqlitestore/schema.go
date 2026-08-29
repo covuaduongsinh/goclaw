@@ -16,7 +16,7 @@ var schemaSQL string
 
 // SchemaVersion is the current SQLite schema version.
 // Bump this when adding new migration steps below.
-const SchemaVersion = 60
+const SchemaVersion = 61
 
 // migrations maps version → SQL to apply when upgrading FROM that version.
 // schema.sql always represents the LATEST full schema (for fresh DBs).
@@ -95,6 +95,39 @@ BEGIN
 END;`
 
 var migrations = map[int]string{
+	// Version 60 → 61: email + password sign-in. Adds the first real user
+	// account table — before this, identity was a self-declared, unverified
+	// X-GoClaw-User-Id header string. user_id stays separate from id so an
+	// account can be attached to identity data that predates the table.
+	60: `CREATE TABLE IF NOT EXISTS users (
+    id                   TEXT NOT NULL PRIMARY KEY,
+    user_id              VARCHAR(255) NOT NULL UNIQUE,
+    email                VARCHAR(320) NOT NULL,
+    password_hash        TEXT NOT NULL,
+    display_name         VARCHAR(255) NOT NULL DEFAULT '',
+    status               VARCHAR(20) NOT NULL DEFAULT 'active',
+    must_change_password BOOLEAN NOT NULL DEFAULT 0,
+    last_login_at        TEXT,
+    created_by           VARCHAR(255) NOT NULL DEFAULT '',
+    created_at           TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    updated_at           TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_lower ON users(lower(email));
+CREATE TABLE IF NOT EXISTS user_sessions (
+    id           TEXT NOT NULL PRIMARY KEY,
+    user_uuid    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id      VARCHAR(255) NOT NULL,
+    token_hash   VARCHAR(64) NOT NULL UNIQUE,
+    tenant_id    TEXT REFERENCES tenants(id),
+    user_agent   VARCHAR(255) NOT NULL DEFAULT '',
+    ip           VARCHAR(64) NOT NULL DEFAULT '',
+    expires_at   TEXT NOT NULL,
+    revoked_at   TEXT,
+    last_seen_at TEXT,
+    created_at   TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+CREATE INDEX IF NOT EXISTS idx_user_sessions_user ON user_sessions(user_uuid);
+CREATE INDEX IF NOT EXISTS idx_user_sessions_expires ON user_sessions(expires_at);`,
 	// Version 59 → 60: keep an append-only copy of group capture. Pending rows are
 	// deleted when the buffer is handed to the agent and when compaction replaces
 	// them with a summary; before this table those deletes destroyed the only copy.

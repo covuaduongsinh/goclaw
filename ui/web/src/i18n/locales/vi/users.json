@@ -1,0 +1,76 @@
+{
+  "title": "Người dùng",
+  "description": "Tài khoản đăng nhập bằng email và mật khẩu",
+  "searchPlaceholder": "Tìm theo email hoặc user ID",
+  "neverSignedIn": "Chưa bao giờ",
+  "fields": {
+    "email": "Email",
+    "password": "Mật khẩu",
+    "displayName": "Tên hiển thị",
+    "userId": "User ID",
+    "tenant": "Tenant",
+    "role": "Vai trò",
+    "status": "Trạng thái",
+    "lastLogin": "Đăng nhập gần nhất",
+    "mustChangePassword": "Bắt buộc đổi mật khẩu"
+  },
+  "status": {
+    "active": "Đang hoạt động",
+    "disabled": "Đã vô hiệu hoá",
+    "mustChange": "Phải đổi mật khẩu"
+  },
+  "actions": {
+    "setPassword": "Đặt mật khẩu",
+    "disable": "Vô hiệu hoá tài khoản",
+    "enable": "Kích hoạt tài khoản",
+    "revokeSessions": "Đăng xuất mọi thiết bị"
+  },
+  "empty": {
+    "title": "Chưa có tài khoản nào",
+    "description": "Tạo tài khoản đầu tiên, hoặc chạy: goclaw user create --email ban@example.com --generate",
+    "noMatch": "Không có tài khoản nào khớp."
+  },
+  "create": {
+    "title": "Tạo tài khoản",
+    "description": "Người dùng sẽ đăng nhập bằng email và mật khẩu này.",
+    "submit": "Tạo tài khoản",
+    "creating": "Đang tạo...",
+    "passwordHint": "Tối thiểu 12 ký tự.",
+    "userIdPlaceholder": "suy ra từ email",
+    "userIdHint": "Đặt user ID để gắn tài khoản này vào agent, phiên hoặc quyền tenant vốn đã thuộc về danh tính đó.",
+    "noTenant": "Không có tenant",
+    "noTenantWarning": "Không có quyền tenant thì tài khoản đăng nhập với vai trò viewer và không dùng được dashboard.",
+    "mustChangeHint": "Nên bật: bạn đang biết mật khẩu này."
+  },
+  "delete": {
+    "title": "Xoá tài khoản",
+    "description": "{{email}} sẽ không đăng nhập được nữa. Mọi phiên kết thúc ngay lập tức."
+  },
+  "setPassword": {
+    "title": "Đặt mật khẩu",
+    "description": "Đặt mật khẩu mới cho {{email}}.",
+    "hint": "Mọi phiên của họ sẽ kết thúc và họ phải đổi mật khẩu ở lần đăng nhập kế tiếp."
+  },
+  "changePassword": {
+    "title": "Đổi mật khẩu",
+    "description": "Cập nhật mật khẩu cho tài khoản của bạn.",
+    "forcedDescription": "Quản trị viên đã đặt mật khẩu hiện tại. Hãy chọn mật khẩu mới để tiếp tục.",
+    "current": "Mật khẩu hiện tại",
+    "new": "Mật khẩu mới",
+    "confirm": "Xác nhận mật khẩu mới",
+    "submit": "Đổi mật khẩu",
+    "success": "Đã đổi mật khẩu. Các thiết bị khác đã bị đăng xuất."
+  },
+  "toast": {
+    "created": "Đã tạo tài khoản",
+    "updated": "Đã cập nhật tài khoản",
+    "deleted": "Đã xoá tài khoản",
+    "passwordSet": "Đã đặt mật khẩu",
+    "sessionsRevoked": "Đã thu hồi các phiên",
+    "failedCreate": "Không tạo được tài khoản",
+    "failedUpdate": "Không cập nhật được tài khoản",
+    "failedDelete": "Không xoá được tài khoản",
+    "failedPassword": "Không đặt được mật khẩu",
+    "failedRevoke": "Không thu hồi được các phiên"
+  }
+}

@@ -2393,3 +2393,45 @@ CREATE UNIQUE INDEX IF NOT EXISTS mcp_oauth_tokens_global_uq
 CREATE UNIQUE INDEX IF NOT EXISTS mcp_oauth_tokens_user_uq
     ON mcp_oauth_tokens (server_id, tenant_id, user_id) WHERE user_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_mcp_oauth_tokens_server_tenant ON mcp_oauth_tokens (server_id, tenant_id);
+
+-- ============================================================
+-- User accounts (email + password sign-in)
+-- ============================================================
+-- user_id is separate from id on purpose: id is the immutable row key, user_id
+-- is the string identity already used by tenant_users, api_keys.owner_id and
+-- agent/session ownership. Keeping them apart lets an operator attach an email
+-- account to identity data that predates this table.
+CREATE TABLE IF NOT EXISTS users (
+    id                   TEXT NOT NULL PRIMARY KEY,
+    user_id              VARCHAR(255) NOT NULL UNIQUE,
+    email                VARCHAR(320) NOT NULL,
+    password_hash        TEXT NOT NULL,
+    display_name         VARCHAR(255) NOT NULL DEFAULT '',
+    status               VARCHAR(20) NOT NULL DEFAULT 'active',
+    must_change_password BOOLEAN NOT NULL DEFAULT 0,
+    last_login_at        TEXT,
+    created_by           VARCHAR(255) NOT NULL DEFAULT '',
+    created_at           TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    updated_at           TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_lower ON users(lower(email));
+
+-- Opaque session tokens issued by POST /v1/auth/login. user_id is denormalized
+-- from users so the auth hot path resolves a request with one indexed lookup.
+CREATE TABLE IF NOT EXISTS user_sessions (
+    id           TEXT NOT NULL PRIMARY KEY,
+    user_uuid    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id      VARCHAR(255) NOT NULL,
+    token_hash   VARCHAR(64) NOT NULL UNIQUE,
+    tenant_id    TEXT REFERENCES tenants(id),
+    user_agent   VARCHAR(255) NOT NULL DEFAULT '',
+    ip           VARCHAR(64) NOT NULL DEFAULT '',
+    expires_at   TEXT NOT NULL,
+    revoked_at   TEXT,
+    last_seen_at TEXT,
+    created_at   TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_sessions_user ON user_sessions(user_uuid);
+CREATE INDEX IF NOT EXISTS idx_user_sessions_expires ON user_sessions(expires_at);

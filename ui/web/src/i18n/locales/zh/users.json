@@ -1,0 +1,76 @@
+{
+  "title": "用户",
+  "description": "可使用邮箱和密码登录的账号",
+  "searchPlaceholder": "按邮箱或 user ID 搜索",
+  "neverSignedIn": "从未登录",
+  "fields": {
+    "email": "邮箱",
+    "password": "密码",
+    "displayName": "显示名称",
+    "userId": "User ID",
+    "tenant": "租户",
+    "role": "角色",
+    "status": "状态",
+    "lastLogin": "最近登录",
+    "mustChangePassword": "要求修改密码"
+  },
+  "status": {
+    "active": "启用",
+    "disabled": "已停用",
+    "mustChange": "须修改密码"
+  },
+  "actions": {
+    "setPassword": "设置密码",
+    "disable": "停用账号",
+    "enable": "启用账号",
+    "revokeSessions": "在所有设备退出"
+  },
+  "empty": {
+    "title": "还没有账号",
+    "description": "创建第一个账号，或运行：goclaw user create --email you@example.com --generate",
+    "noMatch": "没有匹配的账号。"
+  },
+  "create": {
+    "title": "创建账号",
+    "description": "该用户将使用此邮箱和密码登录。",
+    "submit": "创建账号",
+    "creating": "正在创建...",
+    "passwordHint": "至少 12 个字符。",
+    "userIdPlaceholder": "由邮箱推导",
+    "userIdHint": "设置 user ID 可将此账号关联到该身份已拥有的智能体、会话或租户成员身份。",
+    "noTenant": "不指定租户",
+    "noTenantWarning": "没有租户成员身份时，账号将以 viewer 角色登录，无法使用仪表盘。",
+    "mustChangeHint": "建议开启：你已知晓此密码。"
+  },
+  "delete": {
+    "title": "删除账号",
+    "description": "{{email}} 将无法再登录，其会话会立即结束。"
+  },
+  "setPassword": {
+    "title": "设置密码",
+    "description": "为 {{email}} 设置新密码。",
+    "hint": "其所有会话将结束，并需在下次登录时修改密码。"
+  },
+  "changePassword": {
+    "title": "修改密码",
+    "description": "更新你的账号密码。",
+    "forcedDescription": "当前密码由管理员设置，请设置新密码后继续。",
+    "current": "当前密码",
+    "new": "新密码",
+    "confirm": "确认新密码",
+    "submit": "修改密码",
+    "success": "密码已修改，其他设备已退出登录。"
+  },
+  "toast": {
+    "created": "账号已创建",
+    "updated": "账号已更新",
+    "deleted": "账号已删除",
+    "passwordSet": "密码已设置",
+    "sessionsRevoked": "会话已撤销",
+    "failedCreate": "创建账号失败",
+    "failedUpdate": "更新账号失败",
+    "failedDelete": "删除账号失败",
+    "failedPassword": "设置密码失败",
+    "failedRevoke": "撤销会话失败"
+  }
+}

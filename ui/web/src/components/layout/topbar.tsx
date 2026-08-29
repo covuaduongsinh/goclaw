@@ -13,6 +13,8 @@ import { Popover } from "radix-ui";
 import { useState } from "react";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { AboutDialog } from "./about-dialog";
+import { ChangePasswordDialog } from "@/components/shared/change-password-dialog";
+import { useCurrentAccount } from "@/hooks/use-current-account";
 import { SystemSettingsModal } from "./system-settings-modal";
 
 interface TopbarProps {
@@ -131,7 +133,9 @@ function UserMenu() {
   const [open, setOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
   const navigate = useNavigate();
+  const { account, mustChangePassword } = useCurrentAccount();
 
   const tenantLabel = currentTenant?.name || currentTenantName || "";
 
@@ -212,6 +216,17 @@ function UserMenu() {
             </button>
           )}
 
+          {/* Change password — only for accounts that have one */}
+          {account && (
+            <button
+              onClick={() => { setOpen(false); setShowChangePassword(true); }}
+              className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent"
+            >
+              <KeyRound className="h-3.5 w-3.5 shrink-0" />
+              <span>{t("changePassword")}</span>
+            </button>
+          )}
+
           {/* API Keys shortcut */}
           <button
             onClick={() => { setOpen(false); navigate(ROUTES.API_KEYS); }}
@@ -255,6 +270,16 @@ function UserMenu() {
     />
 
     <AboutDialog open={showAbout} onOpenChange={setShowAbout} />
+
+    {/* Forced when an administrator set the current password: the account is
+        not usable until it is replaced, so the dialog cannot be dismissed. */}
+    {account && (mustChangePassword || showChangePassword) && (
+      <ChangePasswordDialog
+        open
+        forced={mustChangePassword}
+        onOpenChange={setShowChangePassword}
+      />
+    )}
     </>
   );
 }

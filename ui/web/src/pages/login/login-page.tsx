@@ -6,11 +6,12 @@ import { ROUTES } from "@/lib/constants";
 import { LoginLayout } from "./login-layout";
 import { LoginTabs, type LoginMode } from "./login-tabs";
 import { TokenForm } from "./token-form";
+import { PasswordForm } from "./password-form";
 import { PairingForm } from "./pairing-form";
 
 export function LoginPage() {
   const { t } = useTranslation("login");
-  const [mode, setMode] = useState<LoginMode>("token");
+  const [mode, setMode] = useState<LoginMode>("password");
 
   const setCredentials = useAuthStore((s) => s.setCredentials);
   const setPairing = useAuthStore((s) => s.setPairing);
@@ -34,11 +35,9 @@ export function LoginPage() {
   return (
     <LoginLayout subtitle={t("subtitle")}>
       <LoginTabs mode={mode} onModeChange={setMode} />
-      {mode === "token" ? (
-        <TokenForm onSubmit={handleTokenLogin} />
-      ) : (
-        <PairingForm onApproved={handlePairingApproved} />
-      )}
+      {mode === "password" && <PasswordForm onSuccess={handleTokenLogin} />}
+      {mode === "token" && <TokenForm onSubmit={handleTokenLogin} />}
+      {mode === "pairing" && <PairingForm onApproved={handlePairingApproved} />}
     </LoginLayout>
   );
 }

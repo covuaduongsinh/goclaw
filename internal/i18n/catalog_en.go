@@ -369,5 +369,20 @@ func init() {
 		MsgPackagesUpdatesReasonLocked:             "Package database is locked",
 		MsgPackagesUpdatesReasonDiskFull:           "Disk full",
 		MsgPackagesUpdatesReasonHelperUnavailable:  "Privileged helper unavailable",
+
+		// User accounts / email sign-in
+		MsgInvalidCredentials:   "invalid email or password",
+		MsgAccountDisabled:      "account is disabled",
+		MsgPasswordTooShort:     "password must be at least %s characters",
+		MsgPasswordTooLong:      "password must be at most %s bytes (accented characters use 2-3 bytes each)",
+		MsgPasswordInvalidChars: "password contains forbidden characters",
+		MsgEmailInvalid:         "invalid email address: %s",
+		MsgEmailExists:          "email is already registered",
+		MsgUserIDExists:         "user id already in use: %s",
+		MsgUserNotFound:         "user not found: %s",
+		MsgSessionExpired:       "session expired, please sign in again",
+		MsgLoginRateLimited:     "too many sign-in attempts, try again in 60 seconds",
+		MsgCurrentPasswordWrong: "current password is incorrect",
+		MsgUserAccountsDisabled: "user accounts are not available on this server",
 	})
 }

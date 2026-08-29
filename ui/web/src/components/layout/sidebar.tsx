@@ -12,6 +12,7 @@ import {
   Settings,
   ShieldCheck,
   Users,
+  UserCog,
   Link,
   Package,
   Blocks,
@@ -140,6 +141,9 @@ export function Sidebar({ collapsed, onNavItemClick }: SidebarProps) {
         <SidebarGroup label={t("groups.system")} collapsed={collapsed}>
           {isOwner && (
             <SidebarItem to={ROUTES.TENANTS} icon={Building2} label={t("nav.tenants")} collapsed={collapsed} />
+          )}
+          {isOwner && (
+            <SidebarItem to={ROUTES.USERS} icon={UserCog} label={t("nav.users")} collapsed={collapsed} />
           )}
           <SidebarItem to={ROUTES.PROVIDERS} icon={Cpu} label={t("nav.providers")} collapsed={collapsed} />
           <SidebarItem to={ROUTES.API_KEYS} icon={KeyRound} label={t("nav.apiKeys")} collapsed={collapsed} />

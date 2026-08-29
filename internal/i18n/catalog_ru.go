@@ -368,5 +368,20 @@ func init() {
 		MsgPackagesUpdatesReasonLocked:             "База данных пакетов заблокирована",
 		MsgPackagesUpdatesReasonDiskFull:           "Диск заполнен",
 		MsgPackagesUpdatesReasonHelperUnavailable:  "Привилегированный помощник недоступен",
+
+		// User accounts / email sign-in
+		MsgInvalidCredentials:   "неверный адрес электронной почты или пароль",
+		MsgAccountDisabled:      "учётная запись отключена",
+		MsgPasswordTooShort:     "пароль должен содержать не менее %s символов",
+		MsgPasswordTooLong:      "пароль не должен превышать %s байт (символы с диакритикой занимают 2-3 байта)",
+		MsgPasswordInvalidChars: "пароль содержит недопустимые символы",
+		MsgEmailInvalid:         "недопустимый адрес электронной почты: %s",
+		MsgEmailExists:          "этот адрес электронной почты уже зарегистрирован",
+		MsgUserIDExists:         "user id уже используется: %s",
+		MsgUserNotFound:         "пользователь не найден: %s",
+		MsgSessionExpired:       "сессия истекла, войдите снова",
+		MsgLoginRateLimited:     "слишком много попыток входа, повторите через 60 секунд",
+		MsgCurrentPasswordWrong: "текущий пароль неверен",
+		MsgUserAccountsDisabled: "учётные записи пользователей недоступны на этом сервере",
 	})
 }

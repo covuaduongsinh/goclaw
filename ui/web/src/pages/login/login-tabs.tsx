@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-export type LoginMode = "token" | "pairing";
+export type LoginMode = "password" | "token" | "pairing";
 
 interface LoginTabsProps {
   mode: LoginMode;
@@ -11,6 +11,17 @@ export function LoginTabs({ mode, onModeChange }: LoginTabsProps) {
   const { t } = useTranslation("login");
   return (
     <div className="flex rounded-md border bg-muted p-1">
+      <button
+        type="button"
+        onClick={() => onModeChange("password")}
+        className={`flex-1 rounded-sm px-3 py-1.5 text-sm font-medium transition-colors ${
+          mode === "password"
+            ? "bg-background text-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        }`}
+      >
+        {t("tabs.password")}
+      </button>
       <button
         type="button"
         onClick={() => onModeChange("token")}
