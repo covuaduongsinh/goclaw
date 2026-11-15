@@ -72,7 +72,8 @@ deploy-*.sh
 
 docs/technical-diaries
 docs/zuey
-plans/
+/plans/
+!docs/plans/
 release-manifest.json
 k8s-*/*
 
@@ -116,3 +117,6 @@ ui/web/nginx.staging.conf
 **/debug-*.log
 /*.sql
 scripts/docker-patch-*.sql
+
+# Local agent tracking
+.omc/

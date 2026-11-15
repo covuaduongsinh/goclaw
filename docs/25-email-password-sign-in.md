@@ -162,7 +162,7 @@ Email uniqueness is enforced on `lower(email)`, so one person cannot become two 
 
 Expired sessions are handled in three layers: lookups filter them out, an hourly sweeper deletes rows more than 7 days past expiry, and sign-in trims an account to its 10 newest live sessions so a login loop cannot grow the table without bound.
 
-PostgreSQL migration `000098_user_accounts`; SQLite schema version 61. SQLite evaluates session expiry in Go rather than SQL, because its timestamps are text in the driver's layout, which is not the layout `datetime('now')` produces.
+PostgreSQL migration `000100_user_accounts`; SQLite schema version 61. SQLite evaluates session expiry in Go rather than SQL, because its timestamps are text in the driver's layout, which is not the layout `datetime('now')` produces.
 
 ## 10. Web UI
 
@@ -193,4 +193,4 @@ No SMTP, no email verification, no password-reset link, no self-service sign-up,
 | WebSocket methods | `internal/gateway/methods/users.go` |
 | CLI | `cmd/user.go` |
 | Session sweeper | `cmd/gateway_session_sweeper.go` |
-| Migration | `migrations/000098_user_accounts.up.sql` |
+| Migration | `migrations/000100_user_accounts.up.sql` |

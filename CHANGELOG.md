@@ -16,6 +16,20 @@ All notable changes to GoClaw are documented here. For full documentation, see [
 
 ### Added
 
+- **Task detail dialog shows the full task UUID with one-click copy** — the
+  short identifier (`T-015-cc8e`) carries only the last four hex characters of
+  the UUID, while the agent-facing `team_tasks` tool and RPCs take the full
+  UUID, so a human had no way to name a task to the lead from the dashboard.
+
+- **Dashboard can cancel and retry stuck team tasks** — new WS RPCs
+  `teams.tasks.cancel` (any task not yet completed/cancelled; optional reason is
+  posted as a comment) and `teams.tasks.retry` (stale / failed / cancelled /
+  in_review, and blocked tasks that nothing blocks any more; a human comment is
+  required and is both posted on the task and appended to the assignment prompt).
+  Task detail dialog gets Retry and Cancel buttons. Previously these transitions
+  were reachable only through the lead agent's `team_tasks` tool, so a task that
+  ended up blocked or stale could not be recovered from the UI (#506).
+
 - **Behavior UX sidecar delivery overrides** — Adds sidecar-generated Quick
   Acknowledgement and Intermediate Replies with provider/model, timeout, token,
   and char caps. Effective config resolves Channel > Agent > Workspace, with
@@ -75,6 +89,41 @@ All notable changes to GoClaw are documented here. For full documentation, see [
   for provider-first model selection.
 
 ### Fixed
+
+- **Anthropic model picker lists every model, not only the first 20** — the
+  models request used the API's default page size and never followed
+  `has_more` / `after_id`. It now asks for 1000 per page and follows the cursor
+  (bounded to 20 pages); a failure on a later page keeps the models already
+  fetched.
+
+- **Queued agent runs no longer inherit the context of the session's first request (#1662)** — a run
+  that waited behind an active one started from the context of the first `Enqueue` of that
+  session. It got that request's team dispatch tracker, so the team create lock taken by
+  `team_tasks` `list`/`search` was never released (all later calls for that team and chat
+  blocked forever) and tasks it created were never dispatched; if that context was cancelled,
+  the run was cancelled too. Each run now derives from the context of its own `Enqueue`.
+
+- **Media tools work again for `claude_cli` agents and `/v1/tools/invoke` (#1649)** —
+  `read_image`, `read_audio` and `read_video` failed with `agent budget wiring
+  error: missing agent_context_window,agent_max_tokens` because the MCP bridge
+  middleware and the `/v1/tools/invoke` handler never put the agent's context
+  window and max tokens into the tool context. Both now start from the default
+  budget and overwrite it from the agent row, and log a warning when the agent
+  lookup returns an error. Subagents spawned through the bridge now inherit the calling
+  agent's context window instead of the default.
+
+- **Channel reload no longer hangs after a failed channel start (#1627)** —
+  `PendingHistory.StopFlusher` waited on the flush goroutine's `stopped`
+  channel even when `StartFlusher` had never run. Telegram starts its flusher
+  only after `getMe` and long polling succeed, so a Telegram instance whose
+  `Start()` failed (network down at boot) blocked `InstanceLoader.Reload`
+  forever inside `Stop()` with the loader mutex held — every later channel
+  save from the dashboard queued silently behind it and only a process
+  restart recovered. The same wait sat in `LoadInstanceByID`, loader `Stop`
+  and the timed-out-start cleanup path. `StopFlusher` now returns immediately
+  when the flusher was never started and is idempotent (`sync.Once` around
+  `close(stopCh)`, so a second `Stop()` no longer panics with
+  `close of closed channel`); `StartFlusher` spawns at most one loop.
 
 - **Quick Acknowledgement generated mode** — Generated acknowledgements now use
   the sidecar delivery generator instead of always falling back to fixed

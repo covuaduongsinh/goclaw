@@ -111,6 +111,8 @@ func (h *ProvidersHandler) handleListProviderModels(w http.ResponseWriter, r *ht
 		models = zaiModels()
 	case store.ProviderAIMLAPI:
 		models = aimlapiModels()
+	case store.ProviderRequesty:
+		models, err = fetchRequestyModels(ctx, openAIModelsAPIBase(p.ProviderType, h.resolveAPIBase(p)), p.APIKey)
 	default:
 		// All other types use OpenAI-compatible /models endpoint
 		apiBase := openAIModelsAPIBase(p.ProviderType, h.resolveAPIBase(p))
@@ -124,6 +126,12 @@ func (h *ProvidersHandler) handleListProviderModels(w http.ResponseWriter, r *ht
 		return
 	}
 
+	// Retire stale MiniMax text suggestions only for catalogs whose MiniMax
+	// entries are managed here. Provider-owned catalogs such as Bailian may
+	// intentionally expose older models and must remain unchanged.
+	if p.ProviderType == store.ProviderMiniMax || p.ProviderType == store.ProviderOpenRouter {
+		models = currentMiniMaxTextModels(models)
+	}
 	respond(withReasoningCapabilities(models))
 }
 
@@ -144,6 +152,10 @@ func openAIModelsAPIBase(providerType, apiBase string) string {
 	switch providerType {
 	case store.ProviderAtlasCloud:
 		return store.AtlasCloudDefaultAPIBase
+	case store.ProviderAPIRoute:
+		return store.APIRouteDefaultAPIBase
+	case store.ProviderRequesty:
+		return store.RequestyDefaultAPIBase
 	case store.ProviderKimiCoding:
 		return store.KimiCodingDefaultAPIBase
 	default:
@@ -179,7 +191,9 @@ func withReasoningCapabilities(models []ModelInfo) []ModelInfo {
 	result := make([]ModelInfo, 0, len(models))
 	for _, model := range models {
 		next := model
-		next.Reasoning = providers.LookupReasoningCapability(model.ID)
+		if next.Reasoning == nil {
+			next.Reasoning = providers.LookupReasoningCapability(model.ID)
+		}
 		result = append(result, next)
 	}
 	return result

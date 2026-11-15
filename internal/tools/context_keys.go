@@ -74,6 +74,7 @@ func subagentScopeFromContext(ctx context.Context) TaskScope {
 		TenantID:     store.TenantIDFromContext(ctx),
 		RootAgentID:  store.AgentIDFromContext(ctx),
 		RootAgentKey: ToolAgentKeyFromCtx(ctx),
+		SessionKey:   ToolSessionKeyFromCtx(ctx),
 	}
 }
 
@@ -658,6 +659,27 @@ func WorkspaceChatIDFromCtx(ctx context.Context) string {
 		return rc.WorkspaceChatID
 	}
 	return ""
+}
+
+// OriginChannelFromCtx returns the channel a run ultimately originated from.
+// A delegated run is delivered on the internal "delegate" channel while the
+// real origin is preserved separately (see buildAgentLinkRunRequest), so team
+// scoping and notification routing must follow the origin — addressing them to
+// the delivery channel makes the outbound dispatcher drop them. Identity for
+// non-delegated runs, where the workspace channel is unset.
+func OriginChannelFromCtx(ctx context.Context) string {
+	if c := WorkspaceChannelFromCtx(ctx); c != "" {
+		return c
+	}
+	return ToolChannelFromCtx(ctx)
+}
+
+// OriginChatIDFromCtx is the chat counterpart of OriginChannelFromCtx.
+func OriginChatIDFromCtx(ctx context.Context) string {
+	if c := WorkspaceChatIDFromCtx(ctx); c != "" {
+		return c
+	}
+	return ToolChatIDFromCtx(ctx)
 }
 
 // --- Pending team task dispatch (post-turn processing) ---

@@ -90,10 +90,19 @@ type SubagentTask struct {
 
 // TaskScope is the authorization boundary for every in-memory task action.
 // A task ID alone never authorizes lookup, cancellation, steering, or cleanup.
+//
+// SessionKey is the caller's origin session. Interactive spawn controls copy
+// it from the tool context and leave Administrative false, so one chat cannot
+// list, wait on, steer, or cancel another chat's tasks. Administrative is the
+// explicit opt-in for lifecycle that covers every session of the root agent
+// (the announce roster). An empty SessionKey matches only tasks that were
+// spawned without one; it is not a wildcard.
 type TaskScope struct {
-	TenantID     uuid.UUID
-	RootAgentID  uuid.UUID
-	RootAgentKey string
+	TenantID       uuid.UUID
+	RootAgentID    uuid.UUID
+	RootAgentKey   string
+	SessionKey     string
+	Administrative bool
 }
 
 // SubagentManager manages the lifecycle of spawned subagents.
@@ -111,6 +120,7 @@ type SubagentManager struct {
 	announceQueue   *AnnounceQueue          // optional: batches announces with debounce
 	taskStore       store.SubagentTaskStore // optional: durable async completion ledger
 	usageCaps       *usagecaps.Service
+	postTurn        PostTurnProcessor // optional: dispatches team tasks a detached subagent creates
 	admission       *orchestration.ChildRunAdmission
 	sweeperOnce     sync.Once
 	sweeperStop     chan struct{}
@@ -186,6 +196,11 @@ func (sm *SubagentManager) SetAnnounceQueue(q *AnnounceQueue) {
 // SetTaskStore sets the persistent store for task lifecycle and async retrieval.
 func (sm *SubagentManager) SetTaskStore(s store.SubagentTaskStore) {
 	sm.taskStore = s
+}
+
+// SetPostTurnProcessor wires post-turn team-task dispatch for async spawns.
+func (sm *SubagentManager) SetPostTurnProcessor(p PostTurnProcessor) {
+	sm.postTurn = p
 }
 
 func (sm *SubagentManager) SetUsageCapService(s *usagecaps.Service) {

@@ -161,6 +161,10 @@ func (c *Config) applyEnvOverrides() {
 	envStr("GOCLAW_OPENAI_BASE_URL", &c.Providers.OpenAI.APIBase)
 	envStr("GOCLAW_ATLASCLOUD_API_KEY", &c.Providers.AtlasCloud.APIKey)
 	envStr("GOCLAW_ATLASCLOUD_BASE_URL", &c.Providers.AtlasCloud.APIBase)
+	envStr("GOCLAW_API_ROUTE_API_KEY", &c.Providers.APIRoute.APIKey)
+	envStr("GOCLAW_API_ROUTE_BASE_URL", &c.Providers.APIRoute.APIBase)
+	envStr("GOCLAW_REQUESTY_API_KEY", &c.Providers.Requesty.APIKey)
+	envStr("GOCLAW_REQUESTY_BASE_URL", &c.Providers.Requesty.APIBase)
 	envStr("GOCLAW_OPENROUTER_API_KEY", &c.Providers.OpenRouter.APIKey)
 	envStr("GOCLAW_GROQ_API_KEY", &c.Providers.Groq.APIKey)
 	envStr("GOCLAW_DEEPSEEK_API_KEY", &c.Providers.DeepSeek.APIKey)
@@ -198,6 +202,8 @@ func (c *Config) applyEnvOverrides() {
 	envStr("GOCLAW_SLACK_BOT_TOKEN", &c.Channels.Slack.BotToken)
 	envStr("GOCLAW_SLACK_APP_TOKEN", &c.Channels.Slack.AppToken)
 	envStr("GOCLAW_SLACK_USER_TOKEN", &c.Channels.Slack.UserToken)
+	envStr("GOCLAW_MATTERMOST_SERVER_URL", &c.Channels.Mattermost.ServerURL)
+	envStr("GOCLAW_MATTERMOST_BOT_TOKEN", &c.Channels.Mattermost.BotToken)
 
 	// TTS secrets
 	envStr("GOCLAW_TTS_OPENAI_API_KEY", &c.Tts.OpenAI.APIKey)
@@ -221,6 +227,9 @@ func (c *Config) applyEnvOverrides() {
 	// WhatsApp is enabled via config or DB instances (no bridge_url needed).
 	if c.Channels.Slack.BotToken != "" && c.Channels.Slack.AppToken != "" {
 		c.Channels.Slack.Enabled = true
+	}
+	if c.Channels.Mattermost.ServerURL != "" && c.Channels.Mattermost.BotToken != "" {
+		c.Channels.Mattermost.Enabled = true
 	}
 
 	// Claude CLI provider

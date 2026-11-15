@@ -111,7 +111,7 @@ func emailFingerprint(email string) string {
 }
 
 // storeUnavailable answers 503 when the users table is not wired up, which
-// happens when migration 000098 has not run. The Docker entrypoint does not
+// happens when migration 000100 has not run. The Docker entrypoint does not
 // stop the server on a failed upgrade, so this path is reachable in practice
 // and must not be a 500.
 func (h *AuthLoginHandler) storeUnavailable(w http.ResponseWriter, locale string) bool {

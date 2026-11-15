@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"slices"
 	"strings"
 )
 
@@ -195,9 +196,22 @@ func (p *OpenAIProvider) ChatStream(ctx context.Context, req ChatRequest, onChun
 		return result, fmt.Errorf("%s: stream read error: %w", p.name, err)
 	}
 
-	// Parse accumulated tool call arguments
-	for i := 0; i < len(accumulators); i++ {
-		acc := accumulators[i]
+	// Parse accumulated tool call arguments.
+	// Providers are not guaranteed to emit contiguous zero-based tc.Index
+	// values (point-p1/9router), so walking 0..len-1 can hit a nil slot and
+	// panic. Ranging the map is safe but unordered: parallel calls would run
+	// and be stored in a random order. Sort the indexes that were actually
+	// seen and emit those calls in the order the model assigned.
+	indexes := make([]int, 0, len(accumulators))
+	for idx := range accumulators {
+		indexes = append(indexes, idx)
+	}
+	slices.Sort(indexes)
+	for _, idx := range indexes {
+		acc := accumulators[idx]
+		if acc == nil {
+			continue
+		}
 		args := make(map[string]any)
 		if err := json.Unmarshal([]byte(acc.rawArgs), &args); err != nil && acc.rawArgs != "" {
 			slog.Warn("openai_stream: failed to parse tool call arguments",

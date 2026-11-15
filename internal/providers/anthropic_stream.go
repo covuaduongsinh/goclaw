@@ -40,6 +40,12 @@ func (p *AnthropicProvider) ChatStream(ctx context.Context, req ChatRequest, onC
 	// Track thinking token count by accumulated chunk size
 	thinkingChars := 0
 	var thinkingSignature strings.Builder
+	// Per-block text and signature. content_block_stop runs before
+	// result.ThinkingSignature is assigned, and each thinking block needs its
+	// own signature for tool-loop passback.
+	var blockThinking strings.Builder
+	var blockSignature strings.Builder
+	var redactedData string
 
 	sse := NewSSEScanner(cb)
 	for sse.Next() {
@@ -65,6 +71,9 @@ func (p *AnthropicProvider) ChatStream(ctx context.Context, req ChatRequest, onC
 		case "content_block_start":
 			var ev anthropicContentBlockStartEvent
 			if err := json.Unmarshal([]byte(data), &ev); err == nil {
+				blockThinking.Reset()
+				blockSignature.Reset()
+				redactedData = ev.ContentBlock.Data
 				currentBlockType = ev.ContentBlock.Type
 				if ev.ContentBlock.Type == "tool_use" {
 					result.ToolCalls = append(result.ToolCalls, ToolCall{
@@ -90,6 +99,7 @@ func (p *AnthropicProvider) ChatStream(ctx context.Context, req ChatRequest, onC
 					// Always count raw thinking bytes for billing estimation
 					// below, even when stripping user-visible output.
 					thinkingChars += len(ev.Delta.Thinking)
+					blockThinking.WriteString(ev.Delta.Thinking)
 					if !stripThinking {
 						result.Thinking += ev.Delta.Thinking
 						if onChunk != nil {
@@ -102,6 +112,7 @@ func (p *AnthropicProvider) ChatStream(ctx context.Context, req ChatRequest, onC
 						toolCallJSON[idx] += ev.Delta.PartialJSON
 					}
 				case "signature_delta":
+					blockSignature.WriteString(ev.Delta.Signature)
 					thinkingSignature.WriteString(ev.Delta.Signature)
 				}
 			}
@@ -110,7 +121,7 @@ func (p *AnthropicProvider) ChatStream(ctx context.Context, req ChatRequest, onC
 			// Reconstruct the complete content block for RawAssistantContent
 			if len(rawContentBlocks) > 0 {
 				idx := len(rawContentBlocks) - 1
-				block := p.buildRawBlock(currentBlockType, result, toolCallJSON, idx)
+				block := p.buildRawBlock(currentBlockType, result, toolCallJSON, blockThinking.String(), blockSignature.String(), redactedData)
 				if block != nil {
 					rawContentBlocks[idx] = block
 				}
@@ -124,17 +135,32 @@ func (p *AnthropicProvider) ChatStream(ctx context.Context, req ChatRequest, onC
 					switch ev.Delta.StopReason {
 					case "tool_use":
 						result.FinishReason = "tool_calls"
-					case "max_tokens":
+					case "max_tokens", "model_context_window_exceeded":
 						result.FinishReason = "length"
 					default:
 						result.FinishReason = "stop"
 					}
 				}
-				if ev.Usage.OutputTokens > 0 {
+				if u := ev.Usage; u.OutputTokens > 0 || u.InputTokens > 0 ||
+					u.CacheCreationInputTokens > 0 || u.CacheReadInputTokens > 0 {
 					if result.Usage == nil {
 						result.Usage = &Usage{}
 					}
-					result.Usage.CompletionTokens = ev.Usage.OutputTokens
+					// message_delta usage is cumulative. Some Anthropic-compatible
+					// endpoints report the real input/cache counts here instead of
+					// in message_start, so a non-zero value overrides it.
+					if u.InputTokens > 0 {
+						result.Usage.PromptTokens = u.InputTokens
+					}
+					if u.CacheCreationInputTokens > 0 {
+						result.Usage.CacheCreationTokens = u.CacheCreationInputTokens
+					}
+					if u.CacheReadInputTokens > 0 {
+						result.Usage.CacheReadTokens = u.CacheReadInputTokens
+					}
+					if u.OutputTokens > 0 {
+						result.Usage.CompletionTokens = u.OutputTokens
+					}
 				}
 			}
 

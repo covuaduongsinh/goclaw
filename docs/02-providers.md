@@ -86,7 +86,7 @@ Supported price units: input, output, cache read, cache write, reasoning, reques
 |----------|------|----------|---------------|
 | **anthropic** | Native HTTP + SSE | API key required | `claude-sonnet-4-5-20250929` |
 | **claude_cli** | stdio subprocess + MCP | Binary path (default: `claude`) | `sonnet` |
-| **codex** | OAuth Responses API | OAuth token source | `gpt-5.5` |
+| **codex** | OAuth Responses API | OAuth token source | `gpt-6.1-sol` |
 | **acp** | JSON-RPC 2.0 subagents | Binary + workspace dir | `claude` |
 | **dashscope** | OpenAI-compat wrapper | API key + custom models | `qwen3-max` |
 | **openai** (+ 10+ variants) | OpenAI-compatible | API key + endpoint URL | Model-specific |
@@ -97,13 +97,15 @@ Supported price units: input, output, cache read, cache write, reasoning, reques
 |----------|----------|---------------|-------|
 | openai | `https://api.openai.com/v1` | `gpt-4o` | |
 | atlascloud | `https://api.atlascloud.ai/v1` | `qwen/qwen3.5-flash` | Atlas Cloud OpenAI-compatible LLM endpoint |
+| api_route | `https://global.api-route.com/v1` | `gpt-5.4-mini` | API Route branded OpenAI-compatible endpoint |
 | openrouter | `https://openrouter.ai/api/v1` | `anthropic/claude-sonnet-4-5-20250929` | Model must contain `/` |
+| requesty | `https://router.requesty.ai/v1` | `openai/gpt-4o-mini` | Requesty router; regional bases such as `https://router.eu.requesty.ai/v1` |
 | groq | `https://api.groq.com/openai/v1` | `llama-3.3-70b-versatile` | |
 | deepseek | `https://api.deepseek.com/v1` | `deepseek-chat` | |
 | gemini | `https://generativelanguage.googleapis.com/v1beta/openai` | `gemini-2.0-flash` | Skips empty content fields |
 | mistral | `https://api.mistral.ai/v1` | `mistral-large-latest` | |
 | xai | `https://api.x.ai/v1` | `grok-3-mini` | |
-| minimax | `https://api.minimax.io/v1` | `MiniMax-M3` | Uses OpenAI-compatible chat completions; MiniMax also exposes an Anthropic-compatible API, but GoClaw keeps the current OpenAI-compatible path |
+| minimax | `https://api.minimax.io/v1` | `MiniMax-M3.1-Flash` | Uses OpenAI-compatible chat completions; MiniMax M3 remains available. Flash uses adaptive reasoning with `low`, `medium`, `high`, `xhigh`, or `max` effort (default `max`); it does not accept `service_tier`. Saved model IDs remain unchanged. |
 | cohere | `https://api.cohere.ai/compatibility/v1` | `command-a` | |
 | perplexity | `https://api.perplexity.ai` | `sonar-pro` | |
 | ollama | `http://localhost:11434/v1` | `llama3.3` | Local/configurable |
@@ -112,6 +114,48 @@ Supported price units: input, output, cache read, cache write, reasoning, reques
 | zai-coding | `https://api.z.ai/api/coding/paas/v4` | `glm-5.2` | 1M context, 128K max output |
 | byteplus | `https://ark.ap-southeast.bytepluses.com/api/v3` | `seed-2-0-lite-260228` | Seed 2.0 models |
 | byteplus_coding | `https://ark.ap-southeast.bytepluses.com/api/coding/v3` | `seed-2-0-lite-260228` | Seed 2.0 Coding Plan |
+
+### API Route setup
+
+Set `GOCLAW_API_ROUTE_API_KEY` in the environment, or add the key through the setup wizard. The base URL and model below are defaults and can be overridden:
+
+```json5
+{
+  providers: {
+    api_route: {
+      api_key: "your-api-route-key",
+      api_base: "https://global.api-route.com/v1"
+    }
+  },
+  agents: {
+    defaults: {
+      provider: "api_route",
+      model: "gpt-5.4-mini"
+    }
+  }
+}
+```
+
+### Requesty setup
+
+Set `GOCLAW_REQUESTY_API_KEY` in the environment (keys are created at https://app.requesty.ai/api-keys), or add the key through the setup wizard. Set `GOCLAW_REQUESTY_BASE_URL` or `api_base` to use a regional endpoint, for example `https://router.eu.requesty.ai/v1` for EU routing. Models use `vendor/model` ids such as `anthropic/claude-sonnet-4-5`, or managed policy ids such as `claude-sonnet-4-5`; the provider models list shows both.
+
+```json5
+{
+  providers: {
+    requesty: {
+      api_key: "rqsty-...",
+      api_base: "https://router.requesty.ai/v1"
+    }
+  },
+  agents: {
+    defaults: {
+      provider: "requesty",
+      model: "openai/gpt-4o-mini"
+    }
+  }
+}
+```
 
 ---
 
@@ -601,7 +645,7 @@ Claude CLI inherits thinking support from the underlying Claude model. Thinking 
 
 ## 12. Codex Provider
 
-The Codex provider integrates with OpenAI's ChatGPT Responses API (OAuth-based), defaulting to `gpt-5.5` through the chatgpt.com backend. Unlike standard OpenAI endpoints, Codex uses OAuth token refresh and a custom response format with "phase" markers.
+The Codex provider integrates with OpenAI's ChatGPT Responses API (OAuth-based), defaulting to `gpt-6.1-sol` through the chatgpt.com backend. Unlike standard OpenAI endpoints, Codex uses OAuth token refresh and a custom response format with "phase" markers.
 
 ### Configuration
 
@@ -612,7 +656,7 @@ tokenSource := &MyTokenSource{} // implements TokenSource interface
 provider := NewCodexProvider("codex", tokenSource, "", "")
 // or specify custom API base and model:
 provider := NewCodexProvider("codex", tokenSource,
-  "https://chatgpt.com/backend-api", "gpt-5.5")
+  "https://chatgpt.com/backend-api", "gpt-6.1-sol")
 ```
 
 ### API Endpoint
@@ -631,7 +675,7 @@ Codex returns structured responses with phase markers:
 ```json
 {
   "id": "...",
-  "model": "gpt-5.5",
+  "model": "gpt-6.1-sol",
   "choices": [{
     "message": {
       "role": "assistant",

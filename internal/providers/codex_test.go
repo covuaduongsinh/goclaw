@@ -748,6 +748,42 @@ func TestCodexProviderChatStreamToolCalls(t *testing.T) {
 	}
 }
 
+func TestCodexProviderChatStreamToolCallsKeepStreamOrder(t *testing.T) {
+	const n = 12
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		flusher := w.(http.Flusher)
+
+		for i := 0; i < n; i++ {
+			fmt.Fprintf(w, "data: %s\n\n", fmt.Sprintf(`{"type":"response.function_call_arguments.delta","item_id":"item_%d","delta":"{}"}`, i))
+		}
+		for i := 0; i < n; i++ {
+			fmt.Fprintf(w, "data: %s\n\n", fmt.Sprintf(`{"type":"response.output_item.done","item":{"type":"function_call","id":"item_%d","call_id":"call_%d","name":"tool_%d","arguments":"{}"}}`, i, i, i))
+		}
+		fmt.Fprint(w, "data: {\"type\":\"response.completed\",\"response\":{}}\n\n")
+		flusher.Flush()
+	}))
+	defer server.Close()
+
+	p := NewCodexProvider("test", &staticTokenSource{token: "test"}, server.URL, "gpt-4o")
+	p.retryConfig.Attempts = 1
+
+	result, err := p.ChatStream(context.Background(), ChatRequest{
+		Messages: []Message{{Role: "user", Content: "go"}},
+	}, nil)
+	if err != nil {
+		t.Fatalf("ChatStream: %v", err)
+	}
+	if len(result.ToolCalls) != n {
+		t.Fatalf("ToolCalls length = %d, want %d", len(result.ToolCalls), n)
+	}
+	for i, tc := range result.ToolCalls {
+		if want := fmt.Sprintf("call_%d", i); tc.ID != want {
+			t.Errorf("ToolCalls[%d].ID = %q, want %q", i, tc.ID, want)
+		}
+	}
+}
+
 func TestCodexProviderChatToolCallsNonStream(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/event-stream")
@@ -970,8 +1006,8 @@ func TestCodexBuildRequestBodyImageGenerationTool(t *testing.T) {
 	if tool["action"] != "generate" {
 		t.Errorf("tool[action] = %v, want generate", tool["action"])
 	}
-	if tool["model"] != "gpt-image-2" {
-		t.Errorf("tool[model] = %v, want gpt-image-2", tool["model"])
+	if tool["model"] != DefaultImageModel {
+		t.Errorf("tool[model] = %v, want %v", tool["model"], DefaultImageModel)
 	}
 	if tool["output_format"] != "png" {
 		t.Errorf("tool[output_format] = %v, want png", tool["output_format"])
@@ -1039,8 +1075,8 @@ func TestCodexBuildRequestBodyMixedTools(t *testing.T) {
 	if img["action"] != "generate" {
 		t.Errorf("tools[1] action = %v, want generate", img["action"])
 	}
-	if img["model"] != "gpt-image-2" {
-		t.Errorf("tools[1] model = %v, want gpt-image-2", img["model"])
+	if img["model"] != DefaultImageModel {
+		t.Errorf("tools[1] model = %v, want %v", img["model"], DefaultImageModel)
 	}
 	// Function field must not bleed into image tool.
 	if _, has := img["name"]; has {

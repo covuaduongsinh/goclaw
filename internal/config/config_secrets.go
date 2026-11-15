@@ -24,6 +24,8 @@ func (c *Config) MaskedCopy() *Config {
 	maskNonEmpty(&cp.Providers.Anthropic.APIKey)
 	maskNonEmpty(&cp.Providers.OpenAI.APIKey)
 	maskNonEmpty(&cp.Providers.AtlasCloud.APIKey)
+	maskNonEmpty(&cp.Providers.APIRoute.APIKey)
+	maskNonEmpty(&cp.Providers.Requesty.APIKey)
 	maskNonEmpty(&cp.Providers.OpenRouter.APIKey)
 	maskNonEmpty(&cp.Providers.Groq.APIKey)
 	maskNonEmpty(&cp.Providers.DeepSeek.APIKey)
@@ -49,6 +51,7 @@ func (c *Config) MaskedCopy() *Config {
 	maskNonEmpty(&cp.Channels.Discord.Token)
 	maskNonEmpty(&cp.Channels.Slack.BotToken)
 	maskNonEmpty(&cp.Channels.Slack.AppToken)
+	maskNonEmpty(&cp.Channels.Mattermost.BotToken)
 	maskNonEmpty(&cp.Channels.Zalo.Token)
 	maskNonEmpty(&cp.Channels.Zalo.WebhookSecret)
 	maskNonEmpty(&cp.Channels.Feishu.AppID)
@@ -74,6 +77,8 @@ func (c *Config) StripSecrets() {
 	c.Providers.Anthropic.APIKey = ""
 	c.Providers.OpenAI.APIKey = ""
 	c.Providers.AtlasCloud.APIKey = ""
+	c.Providers.APIRoute.APIKey = ""
+	c.Providers.Requesty.APIKey = ""
 	c.Providers.OpenRouter.APIKey = ""
 	c.Providers.Groq.APIKey = ""
 	c.Providers.DeepSeek.APIKey = ""
@@ -99,6 +104,7 @@ func (c *Config) StripSecrets() {
 	c.Channels.Discord.Token = ""
 	c.Channels.Slack.BotToken = ""
 	c.Channels.Slack.AppToken = ""
+	c.Channels.Mattermost.BotToken = ""
 	c.Channels.Zalo.Token = ""
 	c.Channels.Zalo.WebhookSecret = ""
 	c.Channels.Feishu.AppID = ""
@@ -129,6 +135,8 @@ func (c *Config) StripMaskedSecrets() {
 	stripIfMasked(&c.Providers.Anthropic.APIKey)
 	stripIfMasked(&c.Providers.OpenAI.APIKey)
 	stripIfMasked(&c.Providers.AtlasCloud.APIKey)
+	stripIfMasked(&c.Providers.APIRoute.APIKey)
+	stripIfMasked(&c.Providers.Requesty.APIKey)
 	stripIfMasked(&c.Providers.OpenRouter.APIKey)
 	stripIfMasked(&c.Providers.Groq.APIKey)
 	stripIfMasked(&c.Providers.DeepSeek.APIKey)
@@ -154,6 +162,7 @@ func (c *Config) StripMaskedSecrets() {
 	stripIfMasked(&c.Channels.Discord.Token)
 	stripIfMasked(&c.Channels.Slack.BotToken)
 	stripIfMasked(&c.Channels.Slack.AppToken)
+	stripIfMasked(&c.Channels.Mattermost.BotToken)
 	stripIfMasked(&c.Channels.Zalo.Token)
 	stripIfMasked(&c.Channels.Zalo.WebhookSecret)
 	stripIfMasked(&c.Channels.Feishu.AppID)
