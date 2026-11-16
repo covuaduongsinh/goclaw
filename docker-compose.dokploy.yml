@@ -59,6 +59,7 @@ services:
       - BITRIX24_FORCE_REREGISTER=${BITRIX24_FORCE_REREGISTER:-0}
       - BITRIX24_DEBUG_UNREDACTED_TOKEN=${BITRIX24_DEBUG_UNREDACTED_TOKEN:-0}
       - GOCLAW_POSTGRES_DSN=postgres://${POSTGRES_USER:-goclaw}:${POSTGRES_PASSWORD:-goclaw}@postgres:5432/${POSTGRES_DB:-goclaw}?sslmode=disable
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN:-}
     depends_on:
       postgres:
         condition: service_healthy

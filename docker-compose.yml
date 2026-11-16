@@ -53,6 +53,7 @@ services:
       - BITRIX24_LOG_RAW_EVENT=${BITRIX24_LOG_RAW_EVENT:-0}
       - BITRIX24_FORCE_REREGISTER=${BITRIX24_FORCE_REREGISTER:-0}
       - BITRIX24_DEBUG_UNREDACTED_TOKEN=${BITRIX24_DEBUG_UNREDACTED_TOKEN:-0}
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN:-}
     volumes:
       - goclaw-data:/app/data
       - goclaw-workspace:/app/workspace
