@@ -18,7 +18,9 @@ services:
   postgres:
     image: pgvector/pgvector:pg18
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      # Loopback only: goclaw reaches Postgres as postgres:5432 on the Docker network, so the host port is for local
+      # tools (use an SSH tunnel from elsewhere). Docker publishes around ufw, so a plain mapping is open to the Internet.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-goclaw}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-goclaw}
